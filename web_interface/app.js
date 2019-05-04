@@ -5,15 +5,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 //adding mongodb connection via mongoose
-require('./api_server/db');
+//require('./api_server/db');
+// adding apiRouter
+//const apiRouter = require('./api_server/routes/api_router');
+//app.use('/api/v1', apiRouter);
 
 // adding appRouter
 const appRouter = require('./app_server/routes/app_router');
-// adding apiRouter
-const apiRouter = require('./api_server/routes/api_router');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+//var indexRouter = require('./routes/index');
 
 var app = express();
 
@@ -28,8 +28,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', appRouter);
-app.use('/users', usersRouter);
-app.use('/api/v1', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
