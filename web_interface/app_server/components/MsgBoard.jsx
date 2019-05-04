@@ -72,14 +72,7 @@ class MsgBoard extends React.Component {
 	}
 	analyzeDocument(doc) {
 	    alert('Eyyy lmao');
-	    console.log(doc);
     }
-    /*
-
-                            //<input id=" msg" type=" text" className=" form-control"
-                            //>
-     */
-
 	render(){
 	    return (
 	    	<div>

@@ -20,7 +20,8 @@
     "pug": "2.0.0-beta11",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "validator": "^10.11.0"
+    "validator": "^10.11.0",
+    "text-miner":"1.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

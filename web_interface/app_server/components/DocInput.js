@@ -1,4 +1,5 @@
 const React = require('react');
+var tm = require( 'text-miner' );
 
 class DocInput extends React.Component {
     constructor(props) {
@@ -22,9 +23,22 @@ class DocInput extends React.Component {
 
         //todo: actually sanitize data
         // - remove non alphabetic characters that arnt spaces
-        let sanitizedDoc = this.state.doc;
 
-        this.props.analyzeDocCallback({doc: sanitizedDoc});
+        let corpus = new tm.Corpus([this.state.doc]);
+
+        // sanitizing input
+        corpus
+            .trim()
+            .toLower()
+            .removeInterpunctuation()
+            .removeNewlines()
+            .removeDigits();
+
+        let terms = new tm.DocumentTermMatrix( corpus );
+
+        console.log(terms.vocabulary);
+
+        this.props.analyzeDocCallback({doc: this.state.doc});
    }
 
     render() {
