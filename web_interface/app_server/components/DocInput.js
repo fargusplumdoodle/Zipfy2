@@ -38,15 +38,16 @@ class DocInput extends React.Component {
                         </label>
                     </div>
                     <div className="row">
-                        <div className=" col-3 row-2">
-                            <input id=" msg" type=" text" className=" form-control"
-                                   placeholder=" Your Text document to be analyzed" value={this.state.doc}
-                                   onChange={this.handleText}
-                            />
+                        <div className="col-3">
+                            <textarea
+                                id="doc_input" className=" form-control"
+                                placeholder=" Your Text document to be analyzed" value={this.state.doc}
+                                onChange={this.handleText}
+                            >test</textarea>
                         </div>
-                        <div className=" col-2">
+                        <div className="btn-lg">
                             <button type=" submit" className=" btn btn-primary">
-                                Post
+                                Get Zipfy!
                             </button>
                         </div>
                     </div>
