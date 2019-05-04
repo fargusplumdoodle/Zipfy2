@@ -21,9 +21,7 @@ class DocInput extends React.Component {
         // this will pass the document to the parent component
         event.preventDefault();
 
-        //todo: actually sanitize data
-        // - remove non alphabetic characters that arnt spaces
-
+        // creating corpus from do document
         let corpus = new tm.Corpus([this.state.doc]);
 
         // sanitizing input
@@ -34,11 +32,14 @@ class DocInput extends React.Component {
             .removeNewlines()
             .removeDigits();
 
+        // creating DTM object
         let terms = new tm.DocumentTermMatrix( corpus );
 
-        console.log(terms.vocabulary);
+        // analyzing info
+        let wordFrequency = terms.findFreqTerms(1);
 
-        this.props.analyzeDocCallback({doc: this.state.doc});
+        // passing DocumentTermMatrix to parent
+        this.props.analyzeDocCallback({wordFrequency: wordFrequency});
    }
 
     render() {
