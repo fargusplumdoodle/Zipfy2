@@ -1,6 +1,7 @@
 const React = require('react');
 const MsgList = require('./MsgList.jsx');
 const NewMsg = require('./NewMsg.jsx');
+const DocInput = require('./DocInput');
 
 class MsgBoard extends React.Component {
 	constructor(props){
@@ -69,10 +70,21 @@ class MsgBoard extends React.Component {
             console.log(error);
         });
 	}
+	analyzeDocument(doc) {
+	    alert('Eyyy lmao');
+	    console.log(doc);
+    }
+    /*
+
+                            //<input id=" msg" type=" text" className=" form-control"
+                            //>
+     */
 
 	render(){
 	    return (
 	    	<div>
+                <DocInput analyzeDocCallback={this.analyzeDocument}/>
+                <p>fart</p>
                 <NewMsg addMsgCallback={this.addMessage}/>
                 <MsgList messages={this.state.messages}/>
 			</div>
