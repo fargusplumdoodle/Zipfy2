@@ -1,0 +1,5 @@
+the	4
+after	1
+art	2
+intraduct	1
+elephant	1
