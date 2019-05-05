@@ -54,7 +54,7 @@ class ParetoChecker extends React.Component {
         // if the pareto principle applies
         if (ratioPercent >= 75 && ratioPercent <= 85) {
             return (
-                <div>
+                <div style={this.props.style}>
                     <h3>Pareto Principle: APPLIES!</h3>
                     <Progress value={ratioPercent} color="success">{ratioPercent}%</Progress>
                     <p>The top 20% most frequent words make up <b>{ratioPercent}%</b> of the {this.state.wordCount} total words in the document. THE PARETO PRINCPLE APPLIES TO THIS DOCUMENT!</p>
@@ -63,7 +63,7 @@ class ParetoChecker extends React.Component {
 
         } else {
         return (
-            <div>
+            <div style={this.props.style}>
                 <h3>Pareto Principle</h3>
                 <Progress value={ratioPercent}>{ratioPercent}%</Progress>
                 <p>The top 20% most frequent words make up <b>{ratioPercent}%</b> of the {this.state.wordCount} total words in the document. The Pareto principle does not seem to apply here.</p>

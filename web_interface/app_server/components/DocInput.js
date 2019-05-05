@@ -128,7 +128,7 @@ class DocInput extends React.Component {
                         </div>
                         <div className="btn-lg">
                             <button type=" submit" className=" btn btn-primary">
-                                Get Zipfy!
+                                LETS GET ZIPFY UP IN THIS!
                             </button>
                         </div>
                     </div>
