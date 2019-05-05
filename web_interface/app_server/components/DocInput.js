@@ -21,8 +21,13 @@ class DocInput extends React.Component {
         // this will pass the document to the parent component
         event.preventDefault();
 
+        // pre-sanitizing document
+        let doc = this.state.doc
+            .replace(/[\W_]+/g, ' ')
+            .replace(/\s+/g, ' ');
+
         // creating corpus from do document
-        let corpus = new tm.Corpus([this.state.doc]);
+        let corpus = new tm.Corpus([doc]);
 
         // sanitizing input
         corpus
@@ -30,13 +35,26 @@ class DocInput extends React.Component {
             .toLower()
             .removeInterpunctuation()
             .removeNewlines()
-            .removeDigits();
+            .removeDigits()
+            .removeInvalidCharacters()
+            .stem();
 
         // creating DTM object
         let terms = new tm.DocumentTermMatrix( corpus );
 
         // analyzing info
         let wordFrequency = terms.findFreqTerms(1);
+
+        wordFrequency
+            // sorting array based on count
+            .sort((a,b) => (a.count > b.count) ? 1 : ((b.count> a.count) ? -1 : 0))
+            // reverseing order so the most frequest are first
+            .reverse();
+
+        // if the most frequent word is nothing, remove it
+        if (wordFrequency[0].word === ""){
+            wordFrequency = wordFrequency.slice(1, wordFrequency.length);
+        }
 
         // passing DocumentTermMatrix to parent
         this.props.analyzeDocCallback({wordFrequency: wordFrequency});

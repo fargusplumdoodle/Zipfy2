@@ -1,4 +1,5 @@
 const React = require('react');
+const FreqTable = require('./FreqTable');
 const DocInput = require('./DocInput');
 
 class Zipfy extends React.Component {
@@ -18,12 +19,12 @@ class Zipfy extends React.Component {
     }
 
 	render() {
-		console.log("wf: " + this.state.wordFrequency);
 		if (this.state.showResults) {
 			// displaying results
 			return (
 				<div>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
+					<FreqTable words={this.state.wordFrequency}/>
 				</div>
 			)
 		} else {
