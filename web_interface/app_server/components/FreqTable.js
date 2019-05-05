@@ -18,7 +18,7 @@ const FreqTable = (props) => {
                     <td>{word.word}</td>
                     <td>{word.count}</td>
                     <td>{word.est}</td>
-                    <td style={{color: "red"}}>{word.diff}</td>
+                    <td style={{color: word.difColor}}>{word.diff}</td>
                 </tr>
             )}
             </tbody>

@@ -25,7 +25,7 @@ class Zipfy extends React.Component {
 			return (
 				<div>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
-					<ParetoChecker words={this.state.words}/>
+					<ParetoChecker words={this.state.words} style={{width: 25%}}/>
 					<FreqTable words={this.state.words}/>
 				</div>
 			)

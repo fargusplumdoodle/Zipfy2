@@ -74,6 +74,15 @@ class DocInput extends React.Component {
             // getting wordcount
             wordCount += wordFrequency[i].count;
 
+            // setting difference color based on how far off this word is from what its expected.
+            // if its within 10 % of what is estimated, thats good enough for me
+            let tenPercentLow = Math.round(wordFrequency[i].est - (wordFrequency[i].est * 0.05));
+            let tenPercentHigh = Math.round(wordFrequency[i].est + (wordFrequency[i].est * 0.05));
+
+            wordFrequency[i].difColor =
+                wordFrequency[i].count >= tenPercentLow && wordFrequency[i].count <= tenPercentHigh ?
+                    "green" : "red";
+
         }
 
 
