@@ -5,6 +5,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
+
 //transpile and add react component
 require("@babel/register") ({
 	presets: [ '@babel/preset-react' ]
@@ -18,33 +19,11 @@ function handleHTTPErrors(response) {
     return response;
 }
 
-let msgs = [{
-    id: 1,
-    name: 'fargus',
-     msg: 'EYYYY LMAAOOOOOOOOOO'
-}];
-
-const getMessages = (req, res) => {
-    fetch(`${process.env.API_URL}`)
-        .then(response=> handleHTTPErrors(response))
-        .then(result=> result.json())
-        .then(result=> {
-            if (!(result instanceof Array)) {
-                console.error('API lookup error');
-                result = [];
-            } else {
-                renderIndex(req, res, result);
-            }
-        })
-        .catch(error=> {
-            console.log(error);
-        });
-};
 
 // index handler
 const renderIndex = (req, res)  => {
 	res.render('index', {
-		title: 'ICS 221 Universal JS Message board',
+		title: 'Zipf Calculator',
 		header: ReactDOMServer.renderToString(Header()),
 		footer: ReactDOMServer.renderToString(Footer()),
         msgBoard: ReactDOMServer.renderToString(Zipfy()),
@@ -54,6 +33,5 @@ const renderIndex = (req, res)  => {
 
 
 module.exports = {
-    getMessages,
     renderIndex
 };
