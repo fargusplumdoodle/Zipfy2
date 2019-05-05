@@ -8,7 +8,8 @@ const FreqTable = (props) => {
                     <th className="w-10">Rank</th>
                     <th className="w-40">Word</th>
                     <th className="w-50">Frequency</th>
-                    <th className="w-50"> Est. Frequency</th>
+                    <th className="w-50">Est. Frequency</th>
+                    <th className="w-50">Difference</th>
                 </tr>
             <tbody>
             {props.words.map((word, index) =>
@@ -16,7 +17,8 @@ const FreqTable = (props) => {
                     <td>{index + 1}</td>
                     <td>{word.word}</td>
                     <td>{word.count}</td>
-                    <td>{(TOP_WORD_FREQ / (index + 1))}</td>
+                    <td>{word.est}</td>
+                    <td style={{color: "red"}}>{word.diff}</td>
                 </tr>
             )}
             </tbody>

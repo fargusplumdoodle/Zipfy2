@@ -8,14 +8,14 @@ class Zipfy extends React.Component {
 		super(props);
 		this.analyzeDocument = this.analyzeDocument.bind(this);
 		this.state = {
-		    wordFrequency: [],
+		    words: [],
             showResults: false
 		}
 	}
 	analyzeDocument(doc) {
 	    this.setState({
 			showResults: true,
-			wordFrequency: doc.wordFrequency, // finding each word that shows up once or more
+			words: doc.words, // finding each word that shows up once or more
 		});
     }
 
@@ -25,8 +25,8 @@ class Zipfy extends React.Component {
 			return (
 				<div>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
-					<ParetoChecker words={this.state.wordFrequency}/>
-					<FreqTable words={this.state.wordFrequency}/>
+					<ParetoChecker words={this.state.words}/>
+					<FreqTable words={this.state.words}/>
 				</div>
 			)
 		} else {

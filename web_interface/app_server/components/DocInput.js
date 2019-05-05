@@ -56,8 +56,47 @@ class DocInput extends React.Component {
             return element.word != "";
         });
 
+        // DATA IS VALID FROM HERE ON
+
+        // computing additional info
+        const TOP_WORD_FREQ = wordFrequency[0].count;
+        let wordCount = 0;
+
+        for (let i = 0; i < wordFrequency.length; i++){
+
+            // setting estimated word frequency
+            wordFrequency[i].est = (TOP_WORD_FREQ / (i + 1));
+
+            // getting difference, and addding positive or negative to it
+            let diff = Math.round(wordFrequency[i].count - wordFrequency[i].est);
+            wordFrequency[i].diff = diff > 0 ? "+" + diff : diff;
+
+            // getting wordcount
+            wordCount += wordFrequency[i].count;
+
+        }
+
+
         // passing DocumentTermMatrix to parent
-        this.props.analyzeDocCallback({wordFrequency: wordFrequency});
+        this.props.analyzeDocCallback({
+            words: wordFrequency,
+            wordCount: wordCount,
+            paretoRatio: this.getPareto(wordCount, wordFrequency)
+        });
+   }
+
+   getPareto(wordCount, words) {
+        let topWords = Math.round(words.length * 0.2);
+        let top20count = 0;
+
+        for (let i = 0; i < topWords; i++){
+            words[i].count += top20count;
+        }
+
+       // this is how much of the whole the top 20 percent most used words take up.
+       // According to our friend pareto, this number should be approximatley 80%
+       return (top20count / wordCount) * 100;
+
    }
 
     render() {
