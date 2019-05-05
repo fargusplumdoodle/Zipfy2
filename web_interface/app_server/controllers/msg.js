@@ -39,23 +39,21 @@ const getMessages = (req, res) => {
         .catch(error=> {
             console.log(error);
         });
-}
+};
 
 // index handler
-const renderIndex = (req, res, msgs)  => {
+const renderIndex = (req, res)  => {
 	res.render('index', {
 		title: 'ICS 221 Universal JS Message board',
 		header: ReactDOMServer.renderToString(Header()),
 		footer: ReactDOMServer.renderToString(Footer()),
-        msgBoard: ReactDOMServer.renderToString(Zipfy(
-			{ messages: msgs }
-		)),
-		props: '<script>let messages =' + JSON.stringify(msgs) + '</script>'
+        msgBoard: ReactDOMServer.renderToString(Zipfy()),
 		}
 	)
 };
 
 
 module.exports = {
-    getMessages
+    getMessages,
+    renderIndex
 };

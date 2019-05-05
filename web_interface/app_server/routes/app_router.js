@@ -4,6 +4,6 @@ const router = express.Router();
 const msgController = require('../controllers/msg');
 
 /* get home page */
-router.get('/', msgController.getMessages);
+router.get('/', msgController.renderIndex);
 
 module.exports = router;
