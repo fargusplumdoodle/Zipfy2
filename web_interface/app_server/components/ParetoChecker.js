@@ -1,5 +1,7 @@
 const React = require('react');
-
+// import {Progress} from 'reactstrap';
+const reactstrap = require('reactstrap');
+const Progress = reactstrap.Progress;
 /*
     ParetoChecker requires the following prop: words
     Words is a list of objects like:
@@ -45,15 +47,31 @@ class ParetoChecker extends React.Component {
         }
     }
 
+    //<ProgressBar now={this.state.top20ratio}/>
     render () {
+        let ratioPercent = Math.round(this.state.top20ratio * 100);
+
+        // if the pareto principle applies
+        if (ratioPercent >= 75 && ratioPercent <= 85) {
+            return (
+                <div>
+                    <h3>Pareto Principle: APPLIES!</h3>
+                    <Progress value={ratioPercent} color="success">{ratioPercent}%</Progress>
+                    <p>The top 20% most frequent words make up <b>{ratioPercent}%</b> of the {this.state.wordCount} total words in the document. THE PARETO PRINCPLE APPLIES TO THIS DOCUMENT!</p>
+                </div>
+            )
+
+        } else {
         return (
             <div>
-            <p>{this.state.wordCount}</p>
-            <p>{this.state.top20ratio}</p>
-                <p>{this.state.top20count}</p>
+                <h3>Pareto Principle</h3>
+                <Progress value={ratioPercent}>{ratioPercent}%</Progress>
+                <p>The top 20% most frequent words make up <b>{ratioPercent}%</b> of the {this.state.wordCount} total words in the document. The Pareto principle does not seem to apply here.</p>
+
             </div>
         )
     }
+}
 }
 
 module.exports = ParetoChecker;
