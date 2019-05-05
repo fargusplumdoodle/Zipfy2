@@ -1,6 +1,7 @@
 const React = require('react');
 const FreqTable = require('./FreqTable');
 const DocInput = require('./DocInput');
+const ParetoChecker = require('./ParetoChecker');
 
 class Zipfy extends React.Component {
 	constructor(props){
@@ -24,6 +25,7 @@ class Zipfy extends React.Component {
 			return (
 				<div>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
+					<ParetoChecker words={this.state.wordFrequency}/>
 					<FreqTable words={this.state.wordFrequency}/>
 				</div>
 			)

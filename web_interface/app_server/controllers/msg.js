@@ -11,7 +11,7 @@ require("@babel/register") ({
 });
 const Footer = React.createFactory(require('../components/Footer.jsx'));
 const Header = React.createFactory(require('../components/Header.jsx'));
-const MsgBoard = React.createFactory(require('../components/MsgBoard.jsx'));
+const Zipfy = React.createFactory(require('../components/Zipfy.jsx'));
 
 function handleHTTPErrors(response) {
     if (!response.ok) throw Error(response.status + ': ' + response.statusText);
@@ -47,7 +47,7 @@ const renderIndex = (req, res, msgs)  => {
 		title: 'ICS 221 Universal JS Message board',
 		header: ReactDOMServer.renderToString(Header()),
 		footer: ReactDOMServer.renderToString(Footer()),
-        msgBoard: ReactDOMServer.renderToString(MsgBoard(
+        msgBoard: ReactDOMServer.renderToString(Zipfy(
 			{ messages: msgs }
 		)),
 		props: '<script>let messages =' + JSON.stringify(msgs) + '</script>'

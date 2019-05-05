@@ -25,13 +25,3 @@ const FreqTable = (props) => {
 };
 
 module.exports = FreqTable;
-/*
-            { props.words.map((word, freq) =>
-                <tr>
-                    <td>0</td>
-                    <td>{word}</td>
-                    <td>{freq}</td>
-                </tr>
-            )}
-
- */
