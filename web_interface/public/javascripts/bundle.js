@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./app_server/components/DocInput.js":
+/*!*******************************************!*\
+  !*** ./app_server/components/DocInput.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nvar tm = __webpack_require__(/*! text-miner */ \"./node_modules/text-miner/lib/index.js\");\n\nclass DocInput extends React.Component {\n  constructor(props) {\n    super(props);\n    this.handleText = this.handleText.bind(this);\n    this.analyzeDoc = this.analyzeDoc.bind(this);\n    this.state = {\n      doc: ''\n    };\n  }\n\n  handleText(event) {\n    this.setState({\n      doc: event.target.value\n    });\n  }\n\n  analyzeDoc(event) {\n    // this will pass the document to the parent component\n    event.preventDefault(); // pre-sanitizing document\n\n    let doc = this.state.doc.replace(/[\\W_]+/g, ' ').replace(/\\s+/g, ' '); // creating corpus from do document\n\n    let corpus = new tm.Corpus([doc]); // sanitizing input\n\n    corpus.trim().toLower().removeInterpunctuation().removeNewlines().removeDigits().removeInvalidCharacters().stem(); // creating DTM object\n\n    let terms = new tm.DocumentTermMatrix(corpus); // analyzing info\n\n    let wordFrequency = terms.findFreqTerms(1);\n    wordFrequency // sorting array based on count\n    .sort((a, b) => a.count > b.count ? 1 : b.count > a.count ? -1 : 0) // reverseing order so the most frequest are first\n    .reverse(); // Removing all empty strings. It is required to use the loose inequality operator.\n\n    wordFrequency = wordFrequency.filter(element => {\n      return element.word != \"\";\n    }); // passing DocumentTermMatrix to parent\n\n    this.props.analyzeDocCallback({\n      wordFrequency: wordFrequency\n    });\n  }\n\n  render() {\n    return React.createElement(\"form\", {\n      onSubmit: this.analyzeDoc\n    }, React.createElement(\"div\", {\n      className: \"form-group\"\n    }, React.createElement(\"div\", {\n      className: \"row\"\n    }, React.createElement(\"label\", {\n      htmlFor: \"doc\",\n      className: \"col-3 col-form-label\"\n    }, \"Enter Text:\")), React.createElement(\"div\", {\n      className: \"row\"\n    }, React.createElement(\"div\", {\n      className: \"col-3\"\n    }, React.createElement(\"textarea\", {\n      id: \"doc_input\",\n      className: \" form-control\",\n      placeholder: \" Your Text document to be analyzed\",\n      value: this.state.doc,\n      onChange: this.handleText\n    }, \"test\")), React.createElement(\"div\", {\n      className: \"btn-lg\"\n    }, React.createElement(\"button\", {\n      type: \" submit\",\n      className: \" btn btn-primary\"\n    }, \"Get Zipfy!\")))));\n  }\n\n}\n\nmodule.exports = DocInput;\n\n//# sourceURL=webpack:///./app_server/components/DocInput.js?");
+
+/***/ }),
+
 /***/ "./app_server/components/Footer.jsx":
 /*!******************************************!*\
   !*** ./app_server/components/Footer.jsx ***!
@@ -97,6 +108,17 @@ eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/inde
 
 /***/ }),
 
+/***/ "./app_server/components/FreqTable.js":
+/*!********************************************!*\
+  !*** ./app_server/components/FreqTable.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst FreqTable = props => {\n  const TOP_WORD_FREQ = props.words[0].count;\n  return React.createElement(\"table\", {\n    className: \"table table-striped table-bordered\"\n  }, React.createElement(\"tr\", null, React.createElement(\"th\", {\n    className: \"w-10\"\n  }, \"Rank\"), React.createElement(\"th\", {\n    className: \"w-40\"\n  }, \"Word\"), React.createElement(\"th\", {\n    className: \"w-50\"\n  }, \"Frequency\"), React.createElement(\"th\", {\n    className: \"w-50\"\n  }, \" Est. Frequency\")), React.createElement(\"tbody\", null, props.words.map((word, index) => React.createElement(\"tr\", {\n    key: index\n  }, React.createElement(\"td\", null, index + 1), React.createElement(\"td\", null, word.word), React.createElement(\"td\", null, word.count), React.createElement(\"td\", null, TOP_WORD_FREQ / (index + 1))))));\n};\n\nmodule.exports = FreqTable;\n\n//# sourceURL=webpack:///./app_server/components/FreqTable.js?");
+
+/***/ }),
+
 /***/ "./app_server/components/Header.jsx":
 /*!******************************************!*\
   !*** ./app_server/components/Header.jsx ***!
@@ -104,40 +126,29 @@ eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/inde
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst Header = props => {\n  return React.createElement(\"h1\", null, \"This is a message board!\");\n};\n\nmodule.exports = Header;\n\n//# sourceURL=webpack:///./app_server/components/Header.jsx?");
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst Header = props => {\n  return React.createElement(\"h1\", null, \"Zipfy!\");\n};\n\nmodule.exports = Header;\n\n//# sourceURL=webpack:///./app_server/components/Header.jsx?");
 
 /***/ }),
 
-/***/ "./app_server/components/MsgBoard.jsx":
-/*!********************************************!*\
-  !*** ./app_server/components/MsgBoard.jsx ***!
-  \********************************************/
+/***/ "./app_server/components/ParetoChecker.js":
+/*!************************************************!*\
+  !*** ./app_server/components/ParetoChecker.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst MsgList = __webpack_require__(/*! ./MsgList.jsx */ \"./app_server/components/MsgList.jsx\");\n\nconst NewMsg = __webpack_require__(/*! ./NewMsg.jsx */ \"./app_server/components/NewMsg.jsx\");\n\nclass MsgBoard extends React.Component {\n  constructor(props) {\n    super(props);\n    this.addMessage = this.addMessage.bind(this);\n    this.state = {\n      messages: this.props.messages\n    };\n  }\n\n  handleHTTPErrors(response) {\n    console.log('Response: ');\n    console.log(response);\n    if (!response.ok) throw Error(response.status + ': ' + response.statusText);\n    return response;\n  }\n\n  componentDidMount() {\n    fetch(`${\"http://localhost:8000/api/v1/msgs\"}`).then(response => this.handleHTTPErrors(response)).then(response => response.json()).then(result => {\n      console.log('logging response from json server');\n      console.log(result);\n      this.setState({\n        messages: result\n      });\n    }).catch(error => {\n      console.log('Fetch API Error: ' + error);\n    });\n  }\n\n  addMessage(message) {\n    /*let msgs = this.state.messages;\n     // add id attribute\n    message.id = msgs.length;\n     // append to array\n    msgs.push(message);\n     // update state var\n    this.setState({\n       messages: msgs\n    });*/\n    // update back-end data\n    fetch(`${\"http://localhost:8000/api/v1/msgs\"}`, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify(message)\n    }).then(response => this.handleHTTPErrors(response)).then(result => result.json()).then(result => {\n      console.log('before set state' + this.state.messages);\n      this.setState({\n        messages: [result].concat(this.state.messages)\n      });\n      console.log('after set state' + this.state.messages);\n    }).catch(error => {\n      console.log(error);\n    });\n  }\n\n  render() {\n    return React.createElement(\"div\", null, React.createElement(NewMsg, {\n      addMsgCallback: this.addMessage\n    }), React.createElement(MsgList, {\n      messages: this.state.messages\n    }));\n  }\n\n}\n\nmodule.exports = MsgBoard;\n\n//# sourceURL=webpack:///./app_server/components/MsgBoard.jsx?");
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/*\n    ParetoChecker requires the following prop: words\n    Words is a list of objects like:\n    {\n        word: \"pareto\",\n        count: 34\n    }\n\n    Pareto checker checks to see if the list of words follows the pareto principle to a degree\n */\n\n\nclass ParetoChecker extends React.Component {\n  constructor(props) {\n    super(props);\n    this.getWordCount();\n  }\n\n  getWordCount() {\n    // getting total word count, maybe this should be passed from the analyzer?\n    let wordCount = 0;\n\n    for (let i = 0; i < this.props.words.length; i++) {\n      wordCount += this.props.words[i].count;\n    } // Getting the top 20 percent most used words by rank\n\n\n    let topWords = Math.round(this.props.words.length * 0.2);\n    let top20count = 0;\n\n    for (let i = 0; i < topWords; i++) {\n      // these words are in the top 20 percent\n      top20count += this.props.words[i].count;\n    } // this is how much of the whole the top 20 percent most used words take up.\n    // According to our friend pareto, this number should be approximatley 80%\n\n\n    let top20ratio = top20count / wordCount; // setting state manually\n\n    this.state = {\n      wordCount: wordCount,\n      top20count: top20count,\n      top20ratio: top20ratio\n    };\n  }\n\n  render() {\n    return React.createElement(\"div\", null, React.createElement(\"p\", null, this.state.wordCount), React.createElement(\"p\", null, this.state.top20ratio), React.createElement(\"p\", null, this.state.top20count));\n  }\n\n}\n\nmodule.exports = ParetoChecker;\n\n//# sourceURL=webpack:///./app_server/components/ParetoChecker.js?");
 
 /***/ }),
 
-/***/ "./app_server/components/MsgList.jsx":
-/*!*******************************************!*\
-  !*** ./app_server/components/MsgList.jsx ***!
-  \*******************************************/
+/***/ "./app_server/components/Zipfy.jsx":
+/*!*****************************************!*\
+  !*** ./app_server/components/Zipfy.jsx ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst MsgList = props => {\n  props.messages.map((message, index) => console.log(message.name + '     ' + index));\n  return React.createElement(\"table\", {\n    className: \"table table-striped table-bordered\"\n  }, React.createElement(\"thread\", null, React.createElement(\"tr\", null, React.createElement(\"th\", {\n    className: \"w-25\"\n  }, \"id\"), React.createElement(\"th\", {\n    className: \"w-25\"\n  }, \"Name\"), React.createElement(\"th\", {\n    className: \"w-50\"\n  }, \"Message\"))), React.createElement(\"tbody\", null, props.messages.map((message, index) => React.createElement(\"tr\", {\n    key: message._id\n  }, React.createElement(\"td\", null, index + 1), React.createElement(\"td\", null, message.name), React.createElement(\"td\", null, message.msg)))));\n};\n\nmodule.exports = MsgList;\n/*\n\n\n */\n\n//# sourceURL=webpack:///./app_server/components/MsgList.jsx?");
-
-/***/ }),
-
-/***/ "./app_server/components/NewMsg.jsx":
-/*!******************************************!*\
-  !*** ./app_server/components/NewMsg.jsx ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nclass NewMsg extends React.Component {\n  constructor(props) {\n    super(props);\n    this.handleText = this.handleText.bind(this);\n    this.addMessage = this.addMessage.bind(this);\n    this.state = {\n      name: '',\n      msg: ''\n    };\n  }\n\n  handleText(event) {\n    if (event.target.id === 'name') {\n      this.setState({\n        name: event.target.value\n      });\n    } else {\n      this.setState({\n        msg: event.target.value\n      });\n    }\n  }\n\n  addMessage(event) {\n    event.preventDefault(); //save state vars to local\n\n    let name = this.state.name;\n    let msg = this.state.msg; // make sure neither field is empty\n\n    if (!name || !msg) {\n      return console.error('Name and/or Msg cannot be empty');\n    } // trim any whitespace\n\n\n    name = name.trim();\n    msg = msg.trim(); // pass control to MsgBoard so it can make the API Call and update messa\n\n    this.props.addMsgCallback({\n      name: name,\n      msg: msg\n    });\n  }\n\n  render() {\n    return React.createElement(\"form\", {\n      onSubmit: this.addMessage\n    }, React.createElement(\"div\", {\n      className: \"form-group\"\n    }, React.createElement(\"div\", {\n      className: \"row\"\n    }, React.createElement(\"label\", {\n      htmlFor: \"name\",\n      className: \"col-3 col-form-label\"\n    }, \"Enter Name:\"), React.createElement(\"label\", {\n      htmlFor: \"msg\",\n      className: \"col-7 col-form-label\"\n    }, \"Enter Message:\")), React.createElement(\"div\", {\n      className: \"row\"\n    }, React.createElement(\"div\", {\n      className: \"col-3\"\n    }, React.createElement(\"input\", {\n      id: \"name\",\n      type: \"text\",\n      className: \"form-control\",\n      placeholder: \" Your Name\",\n      value: this.state.name,\n      onChange: this.handleText\n    })), React.createElement(\"div\", {\n      className: \" col-7\"\n    }, React.createElement(\"input\", {\n      id: \" msg\",\n      type: \" text\",\n      className: \" form-control\",\n      placeholder: \" Your Message\",\n      value: this.state.msg,\n      onChange: this.handleText\n    })), React.createElement(\"div\", {\n      className: \" col-2\"\n    }, React.createElement(\"button\", {\n      type: \" submit\",\n      className: \" btn btn-primary\"\n    }, \"Post\")))));\n  }\n\n}\n\nmodule.exports = NewMsg;\n\n//# sourceURL=webpack:///./app_server/components/NewMsg.jsx?");
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst FreqTable = __webpack_require__(/*! ./FreqTable */ \"./app_server/components/FreqTable.js\");\n\nconst DocInput = __webpack_require__(/*! ./DocInput */ \"./app_server/components/DocInput.js\");\n\nconst ParetoChecker = __webpack_require__(/*! ./ParetoChecker */ \"./app_server/components/ParetoChecker.js\");\n\nclass Zipfy extends React.Component {\n  constructor(props) {\n    super(props);\n    this.analyzeDocument = this.analyzeDocument.bind(this);\n    this.state = {\n      wordFrequency: [],\n      showResults: false\n    };\n  }\n\n  analyzeDocument(doc) {\n    this.setState({\n      showResults: true,\n      wordFrequency: doc.wordFrequency // finding each word that shows up once or more\n\n    });\n  }\n\n  render() {\n    if (this.state.showResults) {\n      // displaying results\n      return React.createElement(\"div\", null, React.createElement(DocInput, {\n        analyzeDocCallback: this.analyzeDocument\n      }), React.createElement(ParetoChecker, {\n        words: this.state.wordFrequency\n      }), React.createElement(FreqTable, {\n        words: this.state.wordFrequency\n      }));\n    } else {\n      // Ready for user input\n      return React.createElement(\"div\", null, React.createElement(DocInput, {\n        analyzeDocCallback: this.analyzeDocument\n      }));\n    }\n  }\n\n}\n\nmodule.exports = Zipfy;\n\n//# sourceURL=webpack:///./app_server/components/Zipfy.jsx?");
 
 /***/ }),
 
@@ -148,7 +159,31 @@ eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/inde
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst ReactDOM = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n\nconst Header = __webpack_require__(/*! ../app_server/components/Header.jsx */ \"./app_server/components/Header.jsx\");\n\nconst Footer = __webpack_require__(/*! ../app_server/components/Footer.jsx */ \"./app_server/components/Footer.jsx\");\n\nconst MsgBoard = __webpack_require__(/*! ../app_server/components/MsgBoard.jsx */ \"./app_server/components/MsgBoard.jsx\");\n\nReactDOM.hydrate(React.createElement(Header, null), document.getElementById('header'));\nReactDOM.hydrate(React.createElement(Footer, null), document.getElementById('footer'));\nReactDOM.hydrate(React.createElement(MsgBoard, {\n  messages: messages\n}), document.getElementById('msg-board'));\n\n//# sourceURL=webpack:///./client_side/app.jsx?");
+eval("const React = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nconst ReactDOM = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n\nconst Header = __webpack_require__(/*! ../app_server/components/Header.jsx */ \"./app_server/components/Header.jsx\");\n\nconst Footer = __webpack_require__(/*! ../app_server/components/Footer.jsx */ \"./app_server/components/Footer.jsx\");\n\nconst Zipfy = __webpack_require__(/*! ../app_server/components/Zipfy.jsx */ \"./app_server/components/Zipfy.jsx\");\n\nReactDOM.hydrate(React.createElement(Header, null), document.getElementById('header'));\nReactDOM.hydrate(React.createElement(Footer, null), document.getElementById('footer'));\nReactDOM.hydrate(React.createElement(Zipfy, null), document.getElementById('msg-board'));\n\n//# sourceURL=webpack:///./client_side/app.jsx?");
+
+/***/ }),
+
+/***/ "./node_modules/const-max-uint32/lib/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/const-max-uint32/lib/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// EXPORTS //\n\nmodule.exports = 4294967295; // 2**32 - 1\n\n\n//# sourceURL=webpack:///./node_modules/const-max-uint32/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/lancaster-stemmer/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/lancaster-stemmer/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nmodule.exports = lancasterStemmer\n\nvar stop = -1\nvar intact = 0\nvar cont = 1\nvar protect = 2\nvar vowels = /[aeiouy]/\n\nvar rules = {\n  a: [\n    {match: 'ia', replacement: '', type: intact},\n    {match: 'a', replacement: '', type: intact}\n  ],\n  b: [{match: 'bb', replacement: 'b', type: stop}],\n  c: [\n    {match: 'ytic', replacement: 'ys', type: stop},\n    {match: 'ic', replacement: '', type: cont},\n    {match: 'nc', replacement: 'nt', type: cont}\n  ],\n  d: [\n    {match: 'dd', replacement: 'd', type: stop},\n    {match: 'ied', replacement: 'y', type: cont},\n    {match: 'ceed', replacement: 'cess', type: stop},\n    {match: 'eed', replacement: 'ee', type: stop},\n    {match: 'ed', replacement: '', type: cont},\n    {match: 'hood', replacement: '', type: cont}\n  ],\n  e: [{match: 'e', replacement: '', type: cont}],\n  f: [\n    {match: 'lief', replacement: 'liev', type: stop},\n    {match: 'if', replacement: '', type: cont}\n  ],\n  g: [\n    {match: 'ing', replacement: '', type: cont},\n    {match: 'iag', replacement: 'y', type: stop},\n    {match: 'ag', replacement: '', type: cont},\n    {match: 'gg', replacement: 'g', type: stop}\n  ],\n  h: [\n    {match: 'th', replacement: '', type: intact},\n    {match: 'guish', replacement: 'ct', type: stop},\n    {match: 'ish', replacement: '', type: cont}\n  ],\n  i: [\n    {match: 'i', replacement: '', type: intact},\n    {match: 'i', replacement: 'y', type: cont}\n  ],\n  j: [\n    {match: 'ij', replacement: 'id', type: stop},\n    {match: 'fuj', replacement: 'fus', type: stop},\n    {match: 'uj', replacement: 'ud', type: stop},\n    {match: 'oj', replacement: 'od', type: stop},\n    {match: 'hej', replacement: 'her', type: stop},\n    {match: 'verj', replacement: 'vert', type: stop},\n    {match: 'misj', replacement: 'mit', type: stop},\n    {match: 'nj', replacement: 'nd', type: stop},\n    {match: 'j', replacement: 's', type: stop}\n  ],\n  l: [\n    {match: 'ifiabl', replacement: '', type: stop},\n    {match: 'iabl', replacement: 'y', type: stop},\n    {match: 'abl', replacement: '', type: cont},\n    {match: 'ibl', replacement: '', type: stop},\n    {match: 'bil', replacement: 'bl', type: cont},\n    {match: 'cl', replacement: 'c', type: stop},\n    {match: 'iful', replacement: 'y', type: stop},\n    {match: 'ful', replacement: '', type: cont},\n    {match: 'ul', replacement: '', type: stop},\n    {match: 'ial', replacement: '', type: cont},\n    {match: 'ual', replacement: '', type: cont},\n    {match: 'al', replacement: '', type: cont},\n    {match: 'll', replacement: 'l', type: stop}\n  ],\n  m: [\n    {match: 'ium', replacement: '', type: stop},\n    {match: 'um', replacement: '', type: intact},\n    {match: 'ism', replacement: '', type: cont},\n    {match: 'mm', replacement: 'm', type: stop}\n  ],\n  n: [\n    {match: 'sion', replacement: 'j', type: cont},\n    {match: 'xion', replacement: 'ct', type: stop},\n    {match: 'ion', replacement: '', type: cont},\n    {match: 'ian', replacement: '', type: cont},\n    {match: 'an', replacement: '', type: cont},\n    {match: 'een', replacement: '', type: protect},\n    {match: 'en', replacement: '', type: cont},\n    {match: 'nn', replacement: 'n', type: stop}\n  ],\n  p: [\n    {match: 'ship', replacement: '', type: cont},\n    {match: 'pp', replacement: 'p', type: stop}\n  ],\n  r: [\n    {match: 'er', replacement: '', type: cont},\n    {match: 'ear', replacement: '', type: protect},\n    {match: 'ar', replacement: '', type: stop},\n    {match: 'ior', replacement: '', type: cont},\n    {match: 'or', replacement: '', type: cont},\n    {match: 'ur', replacement: '', type: cont},\n    {match: 'rr', replacement: 'r', type: stop},\n    {match: 'tr', replacement: 't', type: cont},\n    {match: 'ier', replacement: 'y', type: cont}\n  ],\n  s: [\n    {match: 'ies', replacement: 'y', type: cont},\n    {match: 'sis', replacement: 's', type: stop},\n    {match: 'is', replacement: '', type: cont},\n    {match: 'ness', replacement: '', type: cont},\n    {match: 'ss', replacement: '', type: protect},\n    {match: 'ous', replacement: '', type: cont},\n    {match: 'us', replacement: '', type: intact},\n    {match: 's', replacement: '', type: cont},\n    {match: 's', replacement: '', type: stop}\n  ],\n  t: [\n    {match: 'plicat', replacement: 'ply', type: stop},\n    {match: 'at', replacement: '', type: cont},\n    {match: 'ment', replacement: '', type: cont},\n    {match: 'ent', replacement: '', type: cont},\n    {match: 'ant', replacement: '', type: cont},\n    {match: 'ript', replacement: 'rib', type: stop},\n    {match: 'orpt', replacement: 'orb', type: stop},\n    {match: 'duct', replacement: 'duc', type: stop},\n    {match: 'sumpt', replacement: 'sum', type: stop},\n    {match: 'cept', replacement: 'ceiv', type: stop},\n    {match: 'olut', replacement: 'olv', type: stop},\n    {match: 'sist', replacement: '', type: protect},\n    {match: 'ist', replacement: '', type: cont},\n    {match: 'tt', replacement: 't', type: stop}\n  ],\n  u: [\n    {match: 'iqu', replacement: '', type: stop},\n    {match: 'ogu', replacement: 'og', type: stop}\n  ],\n  v: [\n    {match: 'siv', replacement: 'j', type: cont},\n    {match: 'eiv', replacement: '', type: protect},\n    {match: 'iv', replacement: '', type: cont}\n  ],\n  y: [\n    {match: 'bly', replacement: 'bl', type: cont},\n    {match: 'ily', replacement: 'y', type: cont},\n    {match: 'ply', replacement: '', type: protect},\n    {match: 'ly', replacement: '', type: cont},\n    {match: 'ogy', replacement: 'og', type: stop},\n    {match: 'phy', replacement: 'ph', type: stop},\n    {match: 'omy', replacement: 'om', type: stop},\n    {match: 'opy', replacement: 'op', type: stop},\n    {match: 'ity', replacement: '', type: cont},\n    {match: 'ety', replacement: '', type: cont},\n    {match: 'lty', replacement: 'l', type: stop},\n    {match: 'istry', replacement: '', type: stop},\n    {match: 'ary', replacement: '', type: cont},\n    {match: 'ory', replacement: '', type: cont},\n    {match: 'ify', replacement: '', type: stop},\n    {match: 'ncy', replacement: 'nt', type: cont},\n    {match: 'acy', replacement: '', type: cont}\n  ],\n  z: [\n    {match: 'iz', replacement: '', type: cont},\n    {match: 'yz', replacement: 'ys', type: stop}\n  ]\n}\n\nfunction lancasterStemmer(value) {\n  return applyRules(String(value).toLowerCase(), true)\n}\n\nfunction applyRules(value, isintact) {\n  var ruleset = rules[value.charAt(value.length - 1)]\n  var breakpoint\n  var index\n  var length\n  var rule\n  var next\n\n  if (!ruleset) {\n    return value\n  }\n\n  index = -1\n  length = ruleset.length\n\n  while (++index < length) {\n    rule = ruleset[index]\n\n    if (!isintact && rule.type === intact) {\n      continue\n    }\n\n    breakpoint = value.length - rule.match.length\n\n    if (breakpoint < 0 || value.substr(breakpoint) !== rule.match) {\n      continue\n    }\n\n    if (rule.type === protect) {\n      return value\n    }\n\n    next = value.substr(0, breakpoint) + rule.replacement\n\n    if (!acceptable(next)) {\n      continue\n    }\n\n    if (rule.type === cont) {\n      return applyRules(next, false)\n    }\n\n    return next\n  }\n\n  return value\n}\n\n// Detect if a value is acceptable to return, or should be stemmed further.\nfunction acceptable(value) {\n  return vowels.test(value.charAt(0))\n    ? value.length > 1\n    : value.length > 2 && vowels.test(value)\n}\n\n\n//# sourceURL=webpack:///./node_modules/lancaster-stemmer/index.js?");
 
 /***/ }),
 
@@ -281,6 +316,1072 @@ eval("\n\nif (false) {} else {\n  module.exports = __webpack_require__(/*! ./cjs
 
 "use strict";
 eval("\n\nif (false) {} else {\n  module.exports = __webpack_require__(/*! ./cjs/scheduler-tracing.development.js */ \"./node_modules/scheduler/cjs/scheduler-tracing.development.js\");\n}\n\n\n//# sourceURL=webpack:///./node_modules/scheduler/tracing.js?");
+
+/***/ }),
+
+/***/ "./node_modules/sprintf-js/src/sprintf.js":
+/*!************************************************!*\
+  !*** ./node_modules/sprintf-js/src/sprintf.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var __WEBPACK_AMD_DEFINE_RESULT__;/* global window, exports, define */\n\n!function() {\n    'use strict'\n\n    var re = {\n        not_string: /[^s]/,\n        not_bool: /[^t]/,\n        not_type: /[^T]/,\n        not_primitive: /[^v]/,\n        number: /[diefg]/,\n        numeric_arg: /[bcdiefguxX]/,\n        json: /[j]/,\n        not_json: /[^j]/,\n        text: /^[^\\x25]+/,\n        modulo: /^\\x25{2}/,\n        placeholder: /^\\x25(?:([1-9]\\d*)\\$|\\(([^)]+)\\))?(\\+)?(0|'[^$])?(-)?(\\d+)?(?:\\.(\\d+))?([b-gijostTuvxX])/,\n        key: /^([a-z_][a-z_\\d]*)/i,\n        key_access: /^\\.([a-z_][a-z_\\d]*)/i,\n        index_access: /^\\[(\\d+)\\]/,\n        sign: /^[+-]/\n    }\n\n    function sprintf(key) {\n        // `arguments` is not an array, but should be fine for this call\n        return sprintf_format(sprintf_parse(key), arguments)\n    }\n\n    function vsprintf(fmt, argv) {\n        return sprintf.apply(null, [fmt].concat(argv || []))\n    }\n\n    function sprintf_format(parse_tree, argv) {\n        var cursor = 1, tree_length = parse_tree.length, arg, output = '', i, k, ph, pad, pad_character, pad_length, is_positive, sign\n        for (i = 0; i < tree_length; i++) {\n            if (typeof parse_tree[i] === 'string') {\n                output += parse_tree[i]\n            }\n            else if (typeof parse_tree[i] === 'object') {\n                ph = parse_tree[i] // convenience purposes only\n                if (ph.keys) { // keyword argument\n                    arg = argv[cursor]\n                    for (k = 0; k < ph.keys.length; k++) {\n                        if (arg == undefined) {\n                            throw new Error(sprintf('[sprintf] Cannot access property \"%s\" of undefined value \"%s\"', ph.keys[k], ph.keys[k-1]))\n                        }\n                        arg = arg[ph.keys[k]]\n                    }\n                }\n                else if (ph.param_no) { // positional argument (explicit)\n                    arg = argv[ph.param_no]\n                }\n                else { // positional argument (implicit)\n                    arg = argv[cursor++]\n                }\n\n                if (re.not_type.test(ph.type) && re.not_primitive.test(ph.type) && arg instanceof Function) {\n                    arg = arg()\n                }\n\n                if (re.numeric_arg.test(ph.type) && (typeof arg !== 'number' && isNaN(arg))) {\n                    throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))\n                }\n\n                if (re.number.test(ph.type)) {\n                    is_positive = arg >= 0\n                }\n\n                switch (ph.type) {\n                    case 'b':\n                        arg = parseInt(arg, 10).toString(2)\n                        break\n                    case 'c':\n                        arg = String.fromCharCode(parseInt(arg, 10))\n                        break\n                    case 'd':\n                    case 'i':\n                        arg = parseInt(arg, 10)\n                        break\n                    case 'j':\n                        arg = JSON.stringify(arg, null, ph.width ? parseInt(ph.width) : 0)\n                        break\n                    case 'e':\n                        arg = ph.precision ? parseFloat(arg).toExponential(ph.precision) : parseFloat(arg).toExponential()\n                        break\n                    case 'f':\n                        arg = ph.precision ? parseFloat(arg).toFixed(ph.precision) : parseFloat(arg)\n                        break\n                    case 'g':\n                        arg = ph.precision ? String(Number(arg.toPrecision(ph.precision))) : parseFloat(arg)\n                        break\n                    case 'o':\n                        arg = (parseInt(arg, 10) >>> 0).toString(8)\n                        break\n                    case 's':\n                        arg = String(arg)\n                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)\n                        break\n                    case 't':\n                        arg = String(!!arg)\n                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)\n                        break\n                    case 'T':\n                        arg = Object.prototype.toString.call(arg).slice(8, -1).toLowerCase()\n                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)\n                        break\n                    case 'u':\n                        arg = parseInt(arg, 10) >>> 0\n                        break\n                    case 'v':\n                        arg = arg.valueOf()\n                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)\n                        break\n                    case 'x':\n                        arg = (parseInt(arg, 10) >>> 0).toString(16)\n                        break\n                    case 'X':\n                        arg = (parseInt(arg, 10) >>> 0).toString(16).toUpperCase()\n                        break\n                }\n                if (re.json.test(ph.type)) {\n                    output += arg\n                }\n                else {\n                    if (re.number.test(ph.type) && (!is_positive || ph.sign)) {\n                        sign = is_positive ? '+' : '-'\n                        arg = arg.toString().replace(re.sign, '')\n                    }\n                    else {\n                        sign = ''\n                    }\n                    pad_character = ph.pad_char ? ph.pad_char === '0' ? '0' : ph.pad_char.charAt(1) : ' '\n                    pad_length = ph.width - (sign + arg).length\n                    pad = ph.width ? (pad_length > 0 ? pad_character.repeat(pad_length) : '') : ''\n                    output += ph.align ? sign + arg + pad : (pad_character === '0' ? sign + pad + arg : pad + sign + arg)\n                }\n            }\n        }\n        return output\n    }\n\n    var sprintf_cache = Object.create(null)\n\n    function sprintf_parse(fmt) {\n        if (sprintf_cache[fmt]) {\n            return sprintf_cache[fmt]\n        }\n\n        var _fmt = fmt, match, parse_tree = [], arg_names = 0\n        while (_fmt) {\n            if ((match = re.text.exec(_fmt)) !== null) {\n                parse_tree.push(match[0])\n            }\n            else if ((match = re.modulo.exec(_fmt)) !== null) {\n                parse_tree.push('%')\n            }\n            else if ((match = re.placeholder.exec(_fmt)) !== null) {\n                if (match[2]) {\n                    arg_names |= 1\n                    var field_list = [], replacement_field = match[2], field_match = []\n                    if ((field_match = re.key.exec(replacement_field)) !== null) {\n                        field_list.push(field_match[1])\n                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {\n                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {\n                                field_list.push(field_match[1])\n                            }\n                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {\n                                field_list.push(field_match[1])\n                            }\n                            else {\n                                throw new SyntaxError('[sprintf] failed to parse named argument key')\n                            }\n                        }\n                    }\n                    else {\n                        throw new SyntaxError('[sprintf] failed to parse named argument key')\n                    }\n                    match[2] = field_list\n                }\n                else {\n                    arg_names |= 2\n                }\n                if (arg_names === 3) {\n                    throw new Error('[sprintf] mixing positional and named placeholders is not (yet) supported')\n                }\n\n                parse_tree.push(\n                    {\n                        placeholder: match[0],\n                        param_no:    match[1],\n                        keys:        match[2],\n                        sign:        match[3],\n                        pad_char:    match[4],\n                        align:       match[5],\n                        width:       match[6],\n                        precision:   match[7],\n                        type:        match[8]\n                    }\n                )\n            }\n            else {\n                throw new SyntaxError('[sprintf] unexpected placeholder')\n            }\n            _fmt = _fmt.substring(match[0].length)\n        }\n        return sprintf_cache[fmt] = parse_tree\n    }\n\n    /**\n     * export to either browser or node.js\n     */\n    /* eslint-disable quote-props */\n    if (true) {\n        exports['sprintf'] = sprintf\n        exports['vsprintf'] = vsprintf\n    }\n    if (typeof window !== 'undefined') {\n        window['sprintf'] = sprintf\n        window['vsprintf'] = vsprintf\n\n        if (true) {\n            !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {\n                return {\n                    'sprintf': sprintf,\n                    'vsprintf': vsprintf\n                }\n            }).call(exports, __webpack_require__, exports, module),\n\t\t\t\t__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))\n        }\n    }\n    /* eslint-enable quote-props */\n}(); // eslint-disable-line\n\n\n//# sourceURL=webpack:///./node_modules/sprintf-js/src/sprintf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/stemmer/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/stemmer/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nmodule.exports = stemmer\n\n// Standard suffix manipulations.\nvar step2list = {\n  ational: 'ate',\n  tional: 'tion',\n  enci: 'ence',\n  anci: 'ance',\n  izer: 'ize',\n  bli: 'ble',\n  alli: 'al',\n  entli: 'ent',\n  eli: 'e',\n  ousli: 'ous',\n  ization: 'ize',\n  ation: 'ate',\n  ator: 'ate',\n  alism: 'al',\n  iveness: 'ive',\n  fulness: 'ful',\n  ousness: 'ous',\n  aliti: 'al',\n  iviti: 'ive',\n  biliti: 'ble',\n  logi: 'log'\n}\n\nvar step3list = {\n  icate: 'ic',\n  ative: '',\n  alize: 'al',\n  iciti: 'ic',\n  ical: 'ic',\n  ful: '',\n  ness: ''\n}\n\n// Consonant-vowel sequences.\nvar consonant = '[^aeiou]'\nvar vowel = '[aeiouy]'\nvar consonants = '(' + consonant + '[^aeiouy]*)'\nvar vowels = '(' + vowel + '[aeiou]*)'\n\nvar gt0 = new RegExp('^' + consonants + '?' + vowels + consonants)\nvar eq1 = new RegExp(\n  '^' + consonants + '?' + vowels + consonants + vowels + '?$'\n)\nvar gt1 = new RegExp('^' + consonants + '?(' + vowels + consonants + '){2,}')\nvar vowelInStem = new RegExp('^' + consonants + '?' + vowel)\nvar consonantLike = new RegExp('^' + consonants + vowel + '[^aeiouwxy]$')\n\n// Exception expressions.\nvar sfxLl = /ll$/\nvar sfxE = /^(.+?)e$/\nvar sfxY = /^(.+?)y$/\nvar sfxIon = /^(.+?(s|t))(ion)$/\nvar sfxEdOrIng = /^(.+?)(ed|ing)$/\nvar sfxAtOrBlOrIz = /(at|bl|iz)$/\nvar sfxEED = /^(.+?)eed$/\nvar sfxS = /^.+?[^s]s$/\nvar sfxSsesOrIes = /^.+?(ss|i)es$/\nvar sfxMultiConsonantLike = /([^aeiouylsz])\\1$/\nvar step2 = new RegExp(\n  '^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$'\n)\nvar step3 = /^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/\nvar step4 = new RegExp(\n  '^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$'\n)\n\n// Stem `value`.\nfunction stemmer(value) {\n  var firstCharacterWasLowerCaseY\n  var match\n\n  value = String(value).toLowerCase()\n\n  // Exit early.\n  if (value.length < 3) {\n    return value\n  }\n\n  // Detect initial `y`, make sure it never matches.\n  if (value.charCodeAt(0) === 121 /* y */) {\n    firstCharacterWasLowerCaseY = true\n    value = 'Y' + value.substr(1)\n  }\n\n  // Step 1a.\n  if (sfxSsesOrIes.test(value)) {\n    // Remove last two characters.\n    value = value.substr(0, value.length - 2)\n  } else if (sfxS.test(value)) {\n    // Remove last character.\n    value = value.substr(0, value.length - 1)\n  }\n\n  // Step 1b.\n  if ((match = sfxEED.exec(value))) {\n    if (gt0.test(match[1])) {\n      // Remove last character.\n      value = value.substr(0, value.length - 1)\n    }\n  } else if ((match = sfxEdOrIng.exec(value)) && vowelInStem.test(match[1])) {\n    value = match[1]\n\n    if (sfxAtOrBlOrIz.test(value)) {\n      // Append `e`.\n      value += 'e'\n    } else if (sfxMultiConsonantLike.test(value)) {\n      // Remove last character.\n      value = value.substr(0, value.length - 1)\n    } else if (consonantLike.test(value)) {\n      // Append `e`.\n      value += 'e'\n    }\n  }\n\n  // Step 1c.\n  if ((match = sfxY.exec(value)) && vowelInStem.test(match[1])) {\n    // Remove suffixing `y` and append `i`.\n    value = match[1] + 'i'\n  }\n\n  // Step 2.\n  if ((match = step2.exec(value)) && gt0.test(match[1])) {\n    value = match[1] + step2list[match[2]]\n  }\n\n  // Step 3.\n  if ((match = step3.exec(value)) && gt0.test(match[1])) {\n    value = match[1] + step3list[match[2]]\n  }\n\n  // Step 4.\n  if ((match = step4.exec(value))) {\n    if (gt1.test(match[1])) {\n      value = match[1]\n    }\n  } else if ((match = sfxIon.exec(value)) && gt1.test(match[1])) {\n    value = match[1]\n  }\n\n  // Step 5.\n  if (\n    (match = sfxE.exec(value)) &&\n    (gt1.test(match[1]) ||\n      (eq1.test(match[1]) && !consonantLike.test(match[1])))\n  ) {\n    value = match[1]\n  }\n\n  if (sfxLl.test(value) && gt1.test(value)) {\n    value = value.substr(0, value.length - 1)\n  }\n\n  // Turn initial `Y` back to `y`.\n  if (firstCharacterWasLowerCaseY) {\n    value = 'y' + value.substr(1)\n  }\n\n  return value\n}\n\n\n//# sourceURL=webpack:///./node_modules/stemmer/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/data/contractions.json":
+/*!********************************************************!*\
+  !*** ./node_modules/text-miner/data/contractions.json ***!
+  \********************************************************/
+/*! exports provided: ain't, aren't, can't, can't've, 'cause, could've, couldn't, couldn't've, didn't, doesn't, don't, hadn't, hadn't've, hasn't, haven't, he'd, he'd've, he'll, he'll've, he's, how'd, how'd'y, how'll, how's, I'd, I'd've, I'll, I'll've, I'm, I've, isn't, it'd, it'd've, it'll, it'll've, it's, let's, ma'am, mayn't, might've, mightn't, mightn't've, must've, mustn't, mustn't've, needn't, needn't've, o'clock, oughtn't, oughtn't've, shan't, sha'n't, shan't've, she'd, she'd've, she'll, she'll've, she's, should've, shouldn't, shouldn't've, so've, so's, that'd, that'd've, that's, there'd, there'd've, there's, they'd, they'd've, they'll, they'll've, they're, they've, to've, wasn't, we'd, we'd've, we'll, we'll've, we're, we've, weren't, what'll, what'll've, what're, what's, what've, when's, when've, where'd, where's, where've, who'll, who'll've, who's, who've, why's, why've, will've, won't, won't've, would've, wouldn't, wouldn't've, y'all, y'all'd, y'all'd've, y'all're, y'all've, you'd, you'd've, you'll, you'll've, you're, you've, default */
+/***/ (function(module) {
+
+eval("module.exports = {\"ain't\":[\"am not\",\"are not\",\"is not\",\"has not\",\"have not\"],\"aren't\":[\"are no\",\"am not\"],\"can't\":[\"cannot\"],\"can't've\":[\"cannot have\"],\"'cause\":[\"because\"],\"could've\":[\"could have\"],\"couldn't\":[\"could not\"],\"couldn't've\":[\"could not have\"],\"didn't\":[\"did not\"],\"doesn't\":[\"does not\"],\"don't\":[\"do not\"],\"hadn't\":[\"had not\"],\"hadn't've\":[\"had not have\"],\"hasn't\":[\"has not\"],\"haven't\":[\"have not\"],\"he'd\":[\"he had\",\"he would\"],\"he'd've\":[\"he would have\"],\"he'll\":[\"he shall\",\"he will\"],\"he'll've\":[\"he shall have\",\"he will have\"],\"he's\":[\"he has\",\"he is\"],\"how'd\":[\"how did\"],\"how'd'y\":[\"how do you\"],\"how'll\":[\"how will\"],\"how's\":[\"how has\",\"how is\",\"how does\"],\"I'd\":[\"I had\",\"I would\"],\"I'd've\":[\"I would have\"],\"I'll\":[\"I shall\",\"I will\"],\"I'll've\":[\"I shall have\",\"I will have\"],\"I'm\":[\"I am\"],\"I've\":[\"I have\"],\"isn't\":[\"is not\"],\"it'd\":[\"it had\",\"it would\"],\"it'd've\":[\"it would have\"],\"it'll\":[\"it shall\",\"it will\"],\"it'll've\":[\"it shall have\",\"it will have\"],\"it's\":[\"it has\",\"it is\"],\"let's\":[\"let us\"],\"ma'am\":[\"madam\"],\"mayn't\":[\"may not\"],\"might've\":[\"might have\"],\"mightn't\":[\"might not\"],\"mightn't've\":[\"might not have\"],\"must've\":[\"must have\"],\"mustn't\":[\"must not\"],\"mustn't've\":[\"must not have\"],\"needn't\":[\"need not\"],\"needn't've\":[\"need not have\"],\"o'clock\":[\"of the clock\"],\"oughtn't\":[\"ought not\"],\"oughtn't've\":[\"ought not have\"],\"shan't\":[\"shall not\"],\"sha'n't\":[\"shall not\"],\"shan't've\":[\"shall not have\"],\"she'd\":[\"she had\",\"she would\"],\"she'd've\":[\"she would have\"],\"she'll\":[\"she shall\",\"she will\"],\"she'll've\":[\"she shall have\",\"she will have\"],\"she's\":[\"she has\",\"she is\"],\"should've\":[\"should have\"],\"shouldn't\":[\"should not\"],\"shouldn't've\":[\"should not have\"],\"so've\":[\"so have\"],\"so's\":[\"so as\",\"so is\"],\"that'd\":[\"that would\",\"that had\"],\"that'd've\":[\"that would have\"],\"that's\":[\"that has\",\"that is\"],\"there'd\":[\"there had\",\"there would\"],\"there'd've\":[\"there would have\"],\"there's\":[\"there has\",\"there is\"],\"they'd\":[\"they had\",\"they would\"],\"they'd've\":[\"they would have\"],\"they'll\":[\"they shall\",\"they will\"],\"they'll've\":[\"they shall have\",\"they will have\"],\"they're\":[\"they are\"],\"they've\":[\"they have\"],\"to've\":[\"to have\"],\"wasn't\":[\"was not\"],\"we'd\":[\"we had\",\"we would\"],\"we'd've\":[\"we would have\"],\"we'll\":[\"we will\"],\"we'll've\":[\"we will have\"],\"we're\":[\"we are\"],\"we've\":[\"we have\"],\"weren't\":[\"were not\"],\"what'll\":[\"what shall\",\"what will\"],\"what'll've\":[\"what shall have\",\"what will have\"],\"what're\":[\"what are\"],\"what's\":[\"what has\",\"what is\"],\"what've\":[\"what have\"],\"when's\":[\"when has\",\"when is\"],\"when've\":[\"when have\"],\"where'd\":[\"where did\"],\"where's\":[\"where has\",\"where is\"],\"where've\":[\"where have\"],\"who'll\":[\"who shall\",\"who will\"],\"who'll've\":[\"who shall have\",\"who will have\"],\"who's\":[\"who has\",\"who is\"],\"who've\":[\"who have\"],\"why's\":[\"why has\",\"why is\"],\"why've\":[\"why have\"],\"will've\":[\"will have\"],\"won't\":[\"will not\"],\"won't've\":[\"will not have\"],\"would've\":[\"would have\"],\"wouldn't\":[\"would not\"],\"wouldn't've\":[\"would not have\"],\"y'all\":[\"you all\"],\"y'all'd\":[\"you all would\"],\"y'all'd've\":[\"you all would have\"],\"y'all're\":[\"you all are\"],\"y'all've\":[\"you all have\"],\"you'd\":[\"you had\",\"you would\"],\"you'd've\":[\"you would have\"],\"you'll\":[\"you shall\",\"you will\"],\"you'll've\":[\"you shall have\",\"you will have\"],\"you're\":[\"you are\"],\"you've\":[\"you have\"]};\n\n//# sourceURL=webpack:///./node_modules/text-miner/data/contractions.json?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/data/stopwords.json":
+/*!*****************************************************!*\
+  !*** ./node_modules/text-miner/data/stopwords.json ***!
+  \*****************************************************/
+/*! exports provided: DE, EN, ES, IT, default */
+/***/ (function(module) {
+
+eval("module.exports = {\"DE\":[\"a\",\"ab\",\"aber\",\"aber\",\"ach\",\"acht\",\"achte\",\"achten\",\"achter\",\"achtes\",\"ag\",\"alle\",\"allein\",\"allem\",\"allen\",\"aller\",\"allerdings\",\"alles\",\"allgemeinen\",\"als\",\"als\",\"also\",\"am\",\"an\",\"andere\",\"anderen\",\"andern\",\"anders\",\"au\",\"auch\",\"auch\",\"auf\",\"aus\",\"ausser\",\"außer\",\"ausserdem\",\"außerdem\",\"b\",\"bald\",\"bei\",\"beide\",\"beiden\",\"beim\",\"beispiel\",\"bekannt\",\"bereits\",\"besonders\",\"besser\",\"besten\",\"bin\",\"bis\",\"bisher\",\"bist\",\"c\",\"d\",\"da\",\"dabei\",\"dadurch\",\"dafür\",\"dagegen\",\"daher\",\"dahin\",\"dahinter\",\"damals\",\"damit\",\"danach\",\"daneben\",\"dank\",\"dann\",\"daran\",\"darauf\",\"daraus\",\"darf\",\"darfst\",\"darin\",\"darüber\",\"darum\",\"darunter\",\"das\",\"das\",\"dasein\",\"daselbst\",\"dass\",\"daß\",\"dasselbe\",\"davon\",\"davor\",\"dazu\",\"dazwischen\",\"dein\",\"deine\",\"deinem\",\"deiner\",\"dem\",\"dementsprechend\",\"demgegenüber\",\"demgemäss\",\"demgemäß\",\"demselben\",\"demzufolge\",\"den\",\"denen\",\"denn\",\"denn\",\"denselben\",\"der\",\"deren\",\"derjenige\",\"derjenigen\",\"dermassen\",\"dermaßen\",\"derselbe\",\"derselben\",\"des\",\"deshalb\",\"desselben\",\"dessen\",\"deswegen\",\"d.h\",\"dich\",\"die\",\"diejenige\",\"diejenigen\",\"dies\",\"diese\",\"dieselbe\",\"dieselben\",\"diesem\",\"diesen\",\"dieser\",\"dieses\",\"dir\",\"doch\",\"dort\",\"drei\",\"drin\",\"dritte\",\"dritten\",\"dritter\",\"drittes\",\"du\",\"durch\",\"durchaus\",\"dürfen\",\"dürft\",\"durfte\",\"durften\",\"e\",\"eben\",\"ebenso\",\"ehrlich\",\"ei\",\"ei,\",\"ei,\",\"eigen\",\"eigene\",\"eigenen\",\"eigener\",\"eigenes\",\"ein\",\"einander\",\"eine\",\"einem\",\"einen\",\"einer\",\"eines\",\"einige\",\"einigen\",\"einiger\",\"einiges\",\"einmal\",\"einmal\",\"eins\",\"elf\",\"en\",\"ende\",\"endlich\",\"entweder\",\"entweder\",\"er\",\"Ernst\",\"erst\",\"erste\",\"ersten\",\"erster\",\"erstes\",\"es\",\"etwa\",\"etwas\",\"euch\",\"f\",\"früher\",\"fünf\",\"fünfte\",\"fünften\",\"fünfter\",\"fünftes\",\"für\",\"g\",\"gab\",\"ganz\",\"ganze\",\"ganzen\",\"ganzer\",\"ganzes\",\"gar\",\"gedurft\",\"gegen\",\"gegenüber\",\"gehabt\",\"gehen\",\"geht\",\"gekannt\",\"gekonnt\",\"gemacht\",\"gemocht\",\"gemusst\",\"genug\",\"gerade\",\"gern\",\"gesagt\",\"gesagt\",\"geschweige\",\"gewesen\",\"gewollt\",\"geworden\",\"gibt\",\"ging\",\"gleich\",\"gott\",\"gross\",\"groß\",\"grosse\",\"große\",\"grossen\",\"großen\",\"grosser\",\"großer\",\"grosses\",\"großes\",\"gut\",\"gute\",\"guter\",\"gutes\",\"h\",\"habe\",\"haben\",\"habt\",\"hast\",\"hat\",\"hatte\",\"hätte\",\"hatten\",\"hätten\",\"heisst\",\"her\",\"heute\",\"hier\",\"hin\",\"hinter\",\"hoch\",\"i\",\"ich\",\"ihm\",\"ihn\",\"ihnen\",\"ihr\",\"ihre\",\"ihrem\",\"ihren\",\"ihrer\",\"ihres\",\"im\",\"im\",\"immer\",\"in\",\"in\",\"indem\",\"infolgedessen\",\"ins\",\"irgend\",\"ist\",\"j\",\"ja\",\"ja\",\"jahr\",\"jahre\",\"jahren\",\"je\",\"jede\",\"jedem\",\"jeden\",\"jeder\",\"jedermann\",\"jedermanns\",\"jedoch\",\"jemand\",\"jemandem\",\"jemanden\",\"jene\",\"jenem\",\"jenen\",\"jener\",\"jenes\",\"jetzt\",\"k\",\"kam\",\"kann\",\"kannst\",\"kaum\",\"kein\",\"keine\",\"keinem\",\"keinen\",\"keiner\",\"kleine\",\"kleinen\",\"kleiner\",\"kleines\",\"kommen\",\"kommt\",\"können\",\"könnt\",\"konnte\",\"könnte\",\"konnten\",\"kurz\",\"l\",\"lang\",\"lange\",\"lange\",\"leicht\",\"leide\",\"lieber\",\"los\",\"m\",\"machen\",\"macht\",\"machte\",\"mag\",\"magst\",\"mahn\",\"man\",\"manche\",\"manchem\",\"manchen\",\"mancher\",\"manches\",\"mann\",\"mehr\",\"mein\",\"meine\",\"meinem\",\"meinen\",\"meiner\",\"meines\",\"mensch\",\"menschen\",\"mich\",\"mir\",\"mit\",\"mittel\",\"mochte\",\"möchte\",\"mochten\",\"mögen\",\"möglich\",\"mögt\",\"morgen\",\"muss\",\"muß\",\"müssen\",\"musst\",\"müsst\",\"musste\",\"mussten\",\"n\",\"na\",\"nach\",\"nachdem\",\"nahm\",\"natürlich\",\"neben\",\"nein\",\"neue\",\"neuen\",\"neun\",\"neunte\",\"neunten\",\"neunter\",\"neuntes\",\"nicht\",\"nicht\",\"nichts\",\"nie\",\"niemand\",\"niemandem\",\"niemanden\",\"noch\",\"nun\",\"nun\",\"nur\",\"o\",\"ob\",\"ob\",\"oben\",\"oder\",\"oder\",\"offen\",\"oft\",\"oft\",\"ohne\",\"Ordnung\",\"p\",\"q\",\"r\",\"recht\",\"rechte\",\"rechten\",\"rechter\",\"rechtes\",\"richtig\",\"rund\",\"s\",\"sa\",\"sache\",\"sagt\",\"sagte\",\"sah\",\"satt\",\"schlecht\",\"Schluss\",\"schon\",\"sechs\",\"sechste\",\"sechsten\",\"sechster\",\"sechstes\",\"sehr\",\"sei\",\"sei\",\"seid\",\"seien\",\"sein\",\"seine\",\"seinem\",\"seinen\",\"seiner\",\"seines\",\"seit\",\"seitdem\",\"selbst\",\"selbst\",\"sich\",\"sie\",\"sieben\",\"siebente\",\"siebenten\",\"siebenter\",\"siebentes\",\"sind\",\"so\",\"solang\",\"solche\",\"solchem\",\"solchen\",\"solcher\",\"solches\",\"soll\",\"sollen\",\"sollte\",\"sollten\",\"sondern\",\"sonst\",\"sowie\",\"später\",\"statt\",\"t\",\"tag\",\"tage\",\"tagen\",\"tat\",\"teil\",\"tel\",\"tritt\",\"trotzdem\",\"tun\",\"u\",\"über\",\"überhaupt\",\"übrigens\",\"uhr\",\"um\",\"und\",\"und?\",\"uns\",\"unser\",\"unsere\",\"unserer\",\"unter\",\"v\",\"vergangenen\",\"viel\",\"viele\",\"vielem\",\"vielen\",\"vielleicht\",\"vier\",\"vierte\",\"vierten\",\"vierter\",\"viertes\",\"vom\",\"von\",\"vor\",\"w\",\"wahr?\",\"während\",\"währenddem\",\"währenddessen\",\"wann\",\"war\",\"wäre\",\"waren\",\"wart\",\"warum\",\"was\",\"wegen\",\"weil\",\"weit\",\"weiter\",\"weitere\",\"weiteren\",\"weiteres\",\"welche\",\"welchem\",\"welchen\",\"welcher\",\"welches\",\"wem\",\"wen\",\"wenig\",\"wenig\",\"wenige\",\"weniger\",\"weniges\",\"wenigstens\",\"wenn\",\"wenn\",\"wer\",\"werde\",\"werden\",\"werdet\",\"wessen\",\"wie\",\"wie\",\"wieder\",\"will\",\"willst\",\"wir\",\"wird\",\"wirklich\",\"wirst\",\"wo\",\"wohl\",\"wollen\",\"wollt\",\"wollte\",\"wollten\",\"worden\",\"wurde\",\"würde\",\"wurden\",\"würden\",\"x\",\"y\",\"z\",\"z.b\",\"zehn\",\"zehnte\",\"zehnten\",\"zehnter\",\"zehntes\",\"zeit\",\"zu\",\"zuerst\",\"zugleich\",\"zum\",\"zum\",\"zunächst\",\"zur\",\"zurück\",\"zusammen\",\"zwanzig\",\"zwar\",\"zwar\",\"zwei\",\"zweite\",\"zweiten\",\"zweiter\",\"zweites\",\"zwischen\",\"zwölf\"],\"EN\":[\"a\",\"a's\",\"able\",\"about\",\"above\",\"according\",\"accordingly\",\"across\",\"actually\",\"after\",\"afterwards\",\"again\",\"against\",\"ain't\",\"all\",\"allow\",\"allows\",\"almost\",\"alone\",\"along\",\"already\",\"also\",\"although\",\"always\",\"am\",\"among\",\"amongst\",\"an\",\"and\",\"another\",\"any\",\"anybody\",\"anyhow\",\"anyone\",\"anything\",\"anyway\",\"anyways\",\"anywhere\",\"apart\",\"appear\",\"appreciate\",\"appropriate\",\"are\",\"aren't\",\"around\",\"as\",\"aside\",\"ask\",\"asking\",\"associated\",\"at\",\"available\",\"away\",\"awfully\",\"b\",\"be\",\"became\",\"because\",\"become\",\"becomes\",\"becoming\",\"been\",\"before\",\"beforehand\",\"behind\",\"being\",\"believe\",\"below\",\"beside\",\"besides\",\"best\",\"better\",\"between\",\"beyond\",\"both\",\"brief\",\"but\",\"by\",\"c\",\"c'mon\",\"c's\",\"came\",\"can\",\"can't\",\"cannot\",\"cant\",\"cause\",\"causes\",\"certain\",\"certainly\",\"changes\",\"clearly\",\"co\",\"com\",\"come\",\"comes\",\"concerning\",\"consequently\",\"consider\",\"considering\",\"contain\",\"containing\",\"contains\",\"corresponding\",\"could\",\"couldn't\",\"course\",\"currently\",\"d\",\"definitely\",\"described\",\"despite\",\"did\",\"didn't\",\"different\",\"do\",\"does\",\"doesn't\",\"doing\",\"don't\",\"done\",\"down\",\"downwards\",\"during\",\"e\",\"each\",\"edu\",\"eg\",\"eight\",\"either\",\"else\",\"elsewhere\",\"enough\",\"entirely\",\"especially\",\"et\",\"etc\",\"even\",\"ever\",\"every\",\"everybody\",\"everyone\",\"everything\",\"everywhere\",\"ex\",\"exactly\",\"example\",\"except\",\"f\",\"far\",\"few\",\"fifth\",\"first\",\"five\",\"followed\",\"following\",\"follows\",\"for\",\"former\",\"formerly\",\"forth\",\"four\",\"from\",\"further\",\"furthermore\",\"g\",\"get\",\"gets\",\"getting\",\"given\",\"gives\",\"go\",\"goes\",\"going\",\"gone\",\"got\",\"gotten\",\"greetings\",\"h\",\"had\",\"hadn't\",\"happens\",\"hardly\",\"has\",\"hasn't\",\"have\",\"haven't\",\"having\",\"he\",\"he's\",\"hello\",\"help\",\"hence\",\"her\",\"here\",\"here's\",\"hereafter\",\"hereby\",\"herein\",\"hereupon\",\"hers\",\"herself\",\"hi\",\"him\",\"himself\",\"his\",\"hither\",\"hopefully\",\"how\",\"howbeit\",\"however\",\"i\",\"i'd\",\"i'll\",\"i'm\",\"i've\",\"ie\",\"if\",\"ignored\",\"immediate\",\"in\",\"inasmuch\",\"inc\",\"indeed\",\"indicate\",\"indicated\",\"indicates\",\"inner\",\"insofar\",\"instead\",\"into\",\"inward\",\"is\",\"isn't\",\"it\",\"it'd\",\"it'll\",\"it's\",\"its\",\"itself\",\"j\",\"just\",\"k\",\"keep\",\"keeps\",\"kept\",\"know\",\"knows\",\"known\",\"l\",\"last\",\"lately\",\"later\",\"latter\",\"latterly\",\"least\",\"less\",\"lest\",\"let\",\"let's\",\"like\",\"liked\",\"likely\",\"little\",\"look\",\"looking\",\"looks\",\"ltd\",\"m\",\"mainly\",\"many\",\"may\",\"maybe\",\"me\",\"mean\",\"meanwhile\",\"merely\",\"might\",\"more\",\"moreover\",\"most\",\"mostly\",\"much\",\"must\",\"my\",\"myself\",\"n\",\"name\",\"namely\",\"nd\",\"near\",\"nearly\",\"necessary\",\"need\",\"needs\",\"neither\",\"never\",\"nevertheless\",\"new\",\"next\",\"nine\",\"no\",\"nobody\",\"non\",\"none\",\"noone\",\"nor\",\"normally\",\"not\",\"nothing\",\"novel\",\"now\",\"nowhere\",\"o\",\"obviously\",\"of\",\"off\",\"often\",\"oh\",\"ok\",\"okay\",\"old\",\"on\",\"once\",\"one\",\"ones\",\"only\",\"onto\",\"or\",\"other\",\"others\",\"otherwise\",\"ought\",\"our\",\"ours\",\"ourselves\",\"out\",\"outside\",\"over\",\"overall\",\"own\",\"p\",\"particular\",\"particularly\",\"per\",\"perhaps\",\"placed\",\"please\",\"plus\",\"possible\",\"presumably\",\"probably\",\"provides\",\"q\",\"que\",\"quite\",\"qv\",\"r\",\"rather\",\"rd\",\"re\",\"really\",\"reasonably\",\"regarding\",\"regardless\",\"regards\",\"relatively\",\"respectively\",\"right\",\"s\",\"said\",\"same\",\"saw\",\"say\",\"saying\",\"says\",\"second\",\"secondly\",\"see\",\"seeing\",\"seem\",\"seemed\",\"seeming\",\"seems\",\"seen\",\"self\",\"selves\",\"sensible\",\"sent\",\"serious\",\"seriously\",\"seven\",\"several\",\"shall\",\"she\",\"should\",\"shouldn't\",\"since\",\"six\",\"so\",\"some\",\"somebody\",\"somehow\",\"someone\",\"something\",\"sometime\",\"sometimes\",\"somewhat\",\"somewhere\",\"soon\",\"sorry\",\"specified\",\"specify\",\"specifying\",\"still\",\"sub\",\"such\",\"sup\",\"sure\",\"t\",\"t's\",\"take\",\"taken\",\"tell\",\"tends\",\"th\",\"than\",\"thank\",\"thanks\",\"thanx\",\"that\",\"that's\",\"thats\",\"the\",\"their\",\"theirs\",\"them\",\"themselves\",\"then\",\"thence\",\"there\",\"there's\",\"thereafter\",\"thereby\",\"therefore\",\"therein\",\"theres\",\"thereupon\",\"these\",\"they\",\"they'd\",\"they'll\",\"they're\",\"they've\",\"think\",\"third\",\"this\",\"thorough\",\"thoroughly\",\"those\",\"though\",\"three\",\"through\",\"throughout\",\"thru\",\"thus\",\"to\",\"together\",\"too\",\"took\",\"toward\",\"towards\",\"tried\",\"tries\",\"truly\",\"try\",\"trying\",\"twice\",\"two\",\"u\",\"un\",\"under\",\"unfortunately\",\"unless\",\"unlikely\",\"until\",\"unto\",\"up\",\"upon\",\"us\",\"use\",\"used\",\"useful\",\"uses\",\"using\",\"usually\",\"uucp\",\"v\",\"value\",\"various\",\"very\",\"via\",\"viz\",\"vs\",\"w\",\"want\",\"wants\",\"was\",\"wasn't\",\"way\",\"we\",\"we'd\",\"we'll\",\"we're\",\"we've\",\"welcome\",\"well\",\"went\",\"were\",\"weren't\",\"what\",\"what's\",\"whatever\",\"when\",\"whence\",\"whenever\",\"where\",\"where's\",\"whereafter\",\"whereas\",\"whereby\",\"wherein\",\"whereupon\",\"wherever\",\"whether\",\"which\",\"while\",\"whither\",\"who\",\"who's\",\"whoever\",\"whole\",\"whom\",\"whose\",\"why\",\"will\",\"willing\",\"wish\",\"with\",\"within\",\"without\",\"won't\",\"wonder\",\"would\",\"would\",\"wouldn't\",\"x\",\"y\",\"yes\",\"yet\",\"you\",\"you'd\",\"you'll\",\"you're\",\"you've\",\"your\",\"yours\",\"yourself\",\"yourselves\",\"z\",\"zero\"],\"ES\":[\"él\",\"ésta\",\"éstas\",\"éste\",\"éstos\",\"última\",\"últimas\",\"último\",\"últimos\",\"a\",\"añadió\",\"aún\",\"actualmente\",\"adelante\",\"además\",\"afirmó\",\"agregó\",\"ahí\",\"ahora\",\"al\",\"algún\",\"algo\",\"alguna\",\"algunas\",\"alguno\",\"algunos\",\"alrededor\",\"ambos\",\"ante\",\"anterior\",\"antes\",\"apenas\",\"aproximadamente\",\"aquí\",\"así\",\"aseguró\",\"aunque\",\"ayer\",\"bajo\",\"bien\",\"buen\",\"buena\",\"buenas\",\"bueno\",\"buenos\",\"cómo\",\"cada\",\"casi\",\"cerca\",\"cierto\",\"cinco\",\"comentó\",\"como\",\"con\",\"conocer\",\"consideró\",\"considera\",\"contra\",\"cosas\",\"creo\",\"cual\",\"cuales\",\"cualquier\",\"cuando\",\"cuanto\",\"cuatro\",\"cuenta\",\"da\",\"dado\",\"dan\",\"dar\",\"de\",\"debe\",\"deben\",\"debido\",\"decir\",\"dejó\",\"del\",\"demás\",\"dentro\",\"desde\",\"después\",\"dice\",\"dicen\",\"dicho\",\"dieron\",\"diferente\",\"diferentes\",\"dijeron\",\"dijo\",\"dio\",\"donde\",\"dos\",\"durante\",\"e\",\"ejemplo\",\"el\",\"ella\",\"ellas\",\"ello\",\"ellos\",\"embargo\",\"en\",\"encuentra\",\"entonces\",\"entre\",\"era\",\"eran\",\"es\",\"esa\",\"esas\",\"ese\",\"eso\",\"esos\",\"está\",\"están\",\"esta\",\"estaba\",\"estaban\",\"estamos\",\"estar\",\"estará\",\"estas\",\"este\",\"esto\",\"estos\",\"estoy\",\"estuvo\",\"ex\",\"existe\",\"existen\",\"explicó\",\"expresó\",\"fin\",\"fue\",\"fuera\",\"fueron\",\"gran\",\"grandes\",\"ha\",\"había\",\"habían\",\"haber\",\"habrá\",\"hace\",\"hacen\",\"hacer\",\"hacerlo\",\"hacia\",\"haciendo\",\"han\",\"hasta\",\"hay\",\"haya\",\"he\",\"hecho\",\"hemos\",\"hicieron\",\"hizo\",\"hoy\",\"hubo\",\"igual\",\"incluso\",\"indicó\",\"informó\",\"junto\",\"la\",\"lado\",\"las\",\"le\",\"les\",\"llegó\",\"lleva\",\"llevar\",\"lo\",\"los\",\"luego\",\"lugar\",\"más\",\"manera\",\"manifestó\",\"mayor\",\"me\",\"mediante\",\"mejor\",\"mencionó\",\"menos\",\"mi\",\"mientras\",\"misma\",\"mismas\",\"mismo\",\"mismos\",\"momento\",\"mucha\",\"muchas\",\"mucho\",\"muchos\",\"muy\",\"nada\",\"nadie\",\"ni\",\"ningún\",\"ninguna\",\"ningunas\",\"ninguno\",\"ningunos\",\"no\",\"nos\",\"nosotras\",\"nosotros\",\"nuestra\",\"nuestras\",\"nuestro\",\"nuestros\",\"nueva\",\"nuevas\",\"nuevo\",\"nuevos\",\"nunca\",\"o\",\"ocho\",\"otra\",\"otras\",\"otro\",\"otros\",\"para\",\"parece\",\"parte\",\"partir\",\"pasada\",\"pasado\",\"pero\",\"pesar\",\"poca\",\"pocas\",\"poco\",\"pocos\",\"podemos\",\"podrá\",\"podrán\",\"podría\",\"podrían\",\"poner\",\"por\",\"porque\",\"posible\",\"próximo\",\"próximos\",\"primer\",\"primera\",\"primero\",\"primeros\",\"principalmente\",\"propia\",\"propias\",\"propio\",\"propios\",\"pudo\",\"pueda\",\"puede\",\"pueden\",\"pues\",\"qué\",\"que\",\"quedó\",\"queremos\",\"quién\",\"quien\",\"quienes\",\"quiere\",\"realizó\",\"realizado\",\"realizar\",\"respecto\",\"sí\",\"sólo\",\"se\",\"señaló\",\"sea\",\"sean\",\"según\",\"segunda\",\"segundo\",\"seis\",\"ser\",\"será\",\"serán\",\"sería\",\"si\",\"sido\",\"siempre\",\"siendo\",\"siete\",\"sigue\",\"siguiente\",\"sin\",\"sino\",\"sobre\",\"sola\",\"solamente\",\"solas\",\"solo\",\"solos\",\"son\",\"su\",\"sus\",\"tal\",\"también\",\"tampoco\",\"tan\",\"tanto\",\"tenía\",\"tendrá\",\"tendrán\",\"tenemos\",\"tener\",\"tenga\",\"tengo\",\"tenido\",\"tercera\",\"tiene\",\"tienen\",\"toda\",\"todas\",\"todavía\",\"todo\",\"todos\",\"total\",\"tras\",\"trata\",\"través\",\"tres\",\"tuvo\",\"un\",\"una\",\"unas\",\"uno\",\"unos\",\"usted\",\"va\",\"vamos\",\"van\",\"varias\",\"varios\",\"veces\",\"ver\",\"vez\",\"y\",\"ya\",\"yo\"],\"IT\":[\"a\",\"abbastanza\",\"accidenti\",\"ad\",\"adesso\",\"affinche\",\"agli\",\"ahime\",\"ahimÃ¨\",\"ai\",\"al\",\"alcuna\",\"alcuni\",\"alcuno\",\"all\",\"alla\",\"alle\",\"allo\",\"altri\",\"altrimenti\",\"altro\",\"altrui\",\"anche\",\"ancora\",\"anni\",\"anno\",\"ansa\",\"assai\",\"attesa\",\"avanti\",\"avendo\",\"avente\",\"aver\",\"avere\",\"avete\",\"aveva\",\"avuta\",\"avute\",\"avuti\",\"avuto\",\"basta\",\"bene\",\"benissimo\",\"berlusconi\",\"brava\",\"bravo\",\"c\",\"casa\",\"caso\",\"cento\",\"certa\",\"certe\",\"certi\",\"certo\",\"che\",\"chi\",\"chicchessia\",\"chiunque\",\"ci\",\"ciascuna\",\"ciascuno\",\"cima\",\"cio\",\"ciÃ²\",\"cioe\",\"cioÃ¨\",\"circa\",\"citta\",\"cittÃ \",\"codesta\",\"codesti\",\"codesto\",\"cogli\",\"coi\",\"col\",\"colei\",\"coll\",\"coloro\",\"colui\",\"come\",\"con\",\"concernente\",\"consiglio\",\"contro\",\"cortesia\",\"cos\",\"cosa\",\"cosi\",\"cosÃ¬\",\"cui\",\"d\",\"da\",\"dagli\",\"dai\",\"dal\",\"dall\",\"dalla\",\"dalle\",\"dallo\",\"davanti\",\"degli\",\"dei\",\"del\",\"dell\",\"della\",\"delle\",\"dello\",\"dentro\",\"detto\",\"deve\",\"di\",\"dice\",\"dietro\",\"dire\",\"dirimpetto\",\"dopo\",\"dove\",\"dovra\",\"dovrÃ \",\"due\",\"dunque\",\"durante\",\"e\",\"Ã¨\",\"ecco\",\"ed\",\"egli\",\"ella\",\"eppure\",\"era\",\"erano\",\"esse\",\"essendo\",\"esser\",\"essere\",\"essi\",\"ex\",\"fa\",\"fare\",\"fatto\",\"favore\",\"fin\",\"finalmente\",\"finche\",\"fine\",\"fino\",\"forse\",\"fra\",\"fuori\",\"gia\",\"giÃ \",\"giacche\",\"giorni\",\"giorno\",\"gli\",\"gliela\",\"gliele\",\"glieli\",\"glielo\",\"gliene\",\"governo\",\"grande\",\"grazie\",\"gruppo\",\"ha\",\"hai\",\"hanno\",\"ho\",\"i\",\"ieri\",\"il\",\"improvviso\",\"in\",\"infatti\",\"insieme\",\"intanto\",\"intorno\",\"invece\",\"io\",\"l\",\"la\",\"lÃ \",\"lavoro\",\"le\",\"lei\",\"li\",\"lo\",\"lontano\",\"loro\",\"lui\",\"lungo\",\"ma\",\"macche\",\"magari\",\"mai\",\"male\",\"malgrado\",\"malissimo\",\"me\",\"medesimo\",\"mediante\",\"meglio\",\"meno\",\"mentre\",\"mesi\",\"mezzo\",\"mi\",\"mia\",\"mie\",\"miei\",\"mila\",\"miliardi\",\"milioni\",\"ministro\",\"mio\",\"moltissimo\",\"molto\",\"mondo\",\"nazionale\",\"ne\",\"negli\",\"nei\",\"nel\",\"nell\",\"nella\",\"nelle\",\"nello\",\"nemmeno\",\"neppure\",\"nessuna\",\"nessuno\",\"niente\",\"no\",\"noi\",\"non\",\"nondimeno\",\"nostra\",\"nostre\",\"nostri\",\"nostro\",\"nulla\",\"nuovo\",\"o\",\"od\",\"oggi\",\"ogni\",\"ognuna\",\"ognuno\",\"oltre\",\"oppure\",\"ora\",\"ore\",\"osi\",\"ossia\",\"paese\",\"parecchi\",\"parecchie\",\"parecchio\",\"parte\",\"partendo\",\"peccato\",\"peggio\",\"per\",\"perche\",\"perchÃ¨\",\"percio\",\"perciÃ²\",\"perfino\",\"pero\",\"perÃ²\",\"persone\",\"piedi\",\"pieno\",\"piglia\",\"piu\",\"piÃ¹\",\"po\",\"pochissimo\",\"poco\",\"poi\",\"poiche\",\"press\",\"prima\",\"primo\",\"proprio\",\"puo\",\"puÃ²\",\"pure\",\"purtroppo\",\"qualche\",\"qualcuna\",\"qualcuno\",\"quale\",\"quali\",\"qualunque\",\"quando\",\"quanta\",\"quante\",\"quanti\",\"quanto\",\"quantunque\",\"quasi\",\"quattro\",\"quel\",\"quella\",\"quelli\",\"quello\",\"quest\",\"questa\",\"queste\",\"questi\",\"questo\",\"qui\",\"quindi\",\"riecco\",\"salvo\",\"sara\",\"sarÃ \",\"sarebbe\",\"scopo\",\"scorso\",\"se\",\"secondo\",\"seguente\",\"sei\",\"sempre\",\"senza\",\"si\",\"sia\",\"siamo\",\"siete\",\"solito\",\"solo\",\"sono\",\"sopra\",\"sotto\",\"sta\",\"staranno\",\"stata\",\"state\",\"stati\",\"stato\",\"stesso\",\"su\",\"sua\",\"successivo\",\"sue\",\"sugli\",\"sui\",\"sul\",\"sull\",\"sulla\",\"sulle\",\"sullo\",\"suo\",\"suoi\",\"tale\",\"talvolta\",\"tanto\",\"te\",\"tempo\",\"ti\",\"torino\",\"tra\",\"tranne\",\"tre\",\"troppo\",\"tu\",\"tua\",\"tue\",\"tuo\",\"tuoi\",\"tutta\",\"tuttavia\",\"tutte\",\"tutti\",\"tutto\",\"uguali\",\"un\",\"una\",\"uno\",\"uomo\",\"va\",\"vale\",\"varia\",\"varie\",\"vario\",\"verso\",\"vi\",\"via\",\"vicino\",\"visto\",\"vita\",\"voi\",\"volta\",\"vostra\",\"vostre\",\"vostri\",\"vostro\"]};\n\n//# sourceURL=webpack:///./node_modules/text-miner/data/stopwords.json?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/corpus.js":
+/*!***********************************************!*\
+  !*** ./node_modules/text-miner/lib/corpus.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar _ = __webpack_require__( /*! underscore */ \"./node_modules/underscore/underscore.js\" );\n// Import Underscore.string to separate object, because there are conflict functions (include, reverse, contains)\n_.str = __webpack_require__( /*! underscore.string */ \"./node_modules/underscore.string/index.js\" );\n// Mix in non-conflict functions to Underscore namespace if you want\n_.mixin( _.str.exports() );\n// All functions, include conflict, will be available through _.str object\n_.str.include( 'Underscore.string', 'string' ); // => true\n\n\nvar isArray = __webpack_require__( /*! validate.io-array-like */ \"./node_modules/validate.io-array-like/lib/index.js\" );\nvar isBoolean = __webpack_require__( /*! validate.io-boolean-primitive */ \"./node_modules/validate.io-boolean-primitive/lib/index.js\" );\nvar isObject = __webpack_require__( /*! validate.io-object */ \"./node_modules/validate.io-object/lib/index.js\" );\nvar isObjectArray = __webpack_require__( /*! validate.io-object-array */ \"./node_modules/validate.io-object-array/lib/index.js\" );\nvar isString = __webpack_require__( /*! validate.io-string-primitive */ \"./node_modules/validate.io-string-primitive/lib/index.js\" );\nvar isStringArray = __webpack_require__( /*! validate.io-string-array */ \"./node_modules/validate.io-string-array/lib/index.js\" );\nvar Doc = __webpack_require__( /*! ./document.js */ \"./node_modules/text-miner/lib/document.js\" );\n\nvar lancasterStemmer = __webpack_require__( /*! lancaster-stemmer */ \"./node_modules/lancaster-stemmer/index.js\" );\nvar porterStemmer = __webpack_require__( /*! stemmer */ \"./node_modules/stemmer/index.js\" );\n\n\n// FUNCTIONS //\n\n/**\n* Validates whether input is an instance of Document by using duck-typing.\n*\n* @private\n* @param {*} val - input value\n* @returns {boolean} `true` if `val` is an object with both a `text` and an `attribute` key\n*/\nfunction isDoc( val ) {\n\tif ( isObject( val ) && val.hasOwnProperty( 'text' ) && val.hasOwnProperty( 'attributes' ) ) {\n\t\treturn true;\n\t}\n\treturn false;\n} // end FUNCTION isDoc()\n\n\n/**\n* Validates whether input is an array of Document instances via duck-typing.\n*\n* @private\n* @param {*} val - input value\n* @returns {boolean} `true` if `val` is an array of elements that pass the `isDoc` check\n*/\nfunction isDocArray( val ) {\n\tvar len;\n\tvar i;\n\tif ( !isArray( val ) ) {\n\t\treturn false;\n\t}\n\tlen = val.length;\n\tfor ( i = 0; i < len; i++ ) {\n\t\tif ( !isDoc( val[ i ] ) ) {\n\t\t\treturn false;\n\t\t}\n\t}\n\treturn true;\n} // end FUNCTION isDocArray()\n\n\n// CORPUS //\n\n/**\n* Create a corpus of documents.\n*\n* @constructor\n* @param {(string|Array)} [docs] - string representing a single document or an array of documents\n* @returns {Corpus} class instance\n*/\nfunction Corpus( docs ) {\n\tvar self = this;\n\tif ( !( this instanceof Corpus ) ) {\n\t\treturn new Corpus( docs );\n\t}\n\n\tObject.defineProperty( this, 'nDocs', {\n\t\tget: function() {\n\t\t\treturn this.documents.length;\n\t\t},\n\t\tenumerable: true\n\t});\n\n\t/**\n\t* Invoked when instance of `Corpus` is created. If the input argument is not undefined,\n\t* the supplied documents are added to the corpus.\n\t*\n\t* @param {(Array|string|Document)} val - input value\n\t*/\n\tthis.init = function init( val ) {\n\t\tvar arr;\n\t\tvar len;\n\t\tvar i;\n\t\t// If nothing is passed, treat docs as empty array...\n\t\tif ( val === undefined ) {\n\t\t\tself.documents = [];\n\t\t} else {\n\t\t\tif ( isString( val ) ) {\n\t\t\t\tself.documents = [ new Doc( val ) ];\n\t\t\t} else if ( isStringArray( val ) ) {\n\t\t\t\tlen = val.length;\n\t\t\t\tarr = new Array( len );\n\t\t\t\tfor ( i = 0; i < len; i++ ) {\n\t\t\t\t\tarr[ i ] = new Doc( val[ i ] );\n\t\t\t\t}\n\t\t\t\tself.documents = arr;\n\t\t\t} else if ( isDoc( val ) ) {\n\t\t\t\tself.documents = [ val ];\n\t\t\t} else if ( isDocArray( val ) ) {\n\t\t\t\tself.documents = val;\n\t\t\t} else {\n\t\t\t\tthrow new TypeError( 'Constructor expects either a single string / document or an array of strings / documents.' );\n\t\t\t}\n\t\t}\n\t}; // end METHOD init()\n\n\t/**\n\t* Adds a document to the corpus.\n\t*\n\t* @param {(string|Document)} doc - input document\n\t*/\n\tthis.addDoc = function addDoc( doc ) {\n\t\tif ( isString( doc ) ) {\n\t\t\tself.documents.push( new Doc( doc ) );\n\t\t} else if ( isDoc( doc ) ) {\n\t\t\tself.documents.push( doc );\n\t\t} else {\n\t\t\tthrow new TypeError( 'Argument has to be a string or document.' );\n\t\t}\n\t}; // end METHOD addDoc()\n\n\t/**\n\t* Adds an array documents to the corpus.\n\t*\n\t* @param {Array} docs - array of String or Documents\n\t*/\n\tthis.addDocs = function addDocs( docs ) {\n\t\tvar arr;\n\t\tvar len;\n\t\tvar i;\n\t\tif ( isStringArray( docs ) ) {\n\t\t\tlen = docs.length;\n\t\t\tarr = new Array( len );\n\t\t\tfor ( i = 0; i < len; i++ ) {\n\t\t\t\tarr[ i ] = new Doc( docs[ i ] );\n\t\t\t}\n\t\t\tself.documents = self.documents.concat( arr );\n\t\t} else if ( isDocArray( docs ) ) {\n\t\t\tself.documents = self.documents.concat( docs );\n\t\t} else {\n\t\t\tthrow new TypeError( 'Parameter expects an array of strings or documents.' );\n\t\t}\n\t}; // end METHOD addDocs()\n\n\t/**\n\t* Sets attributes for the documents in the corpus\n\t*\n\t* @param {Array} arr - object array holding document-level attributes\n\t* @returns {Corpus} corpus reference\n\t*/\n\tthis.setAttributes = function setAttributes( arr ) {\n\t\tvar len;\n\t\tvar i;\n\t\tif ( !isObjectArray( arr ) ) {\n\t\t\tthrow new TypeError( 'Input argument has to be an object array.' );\n\t\t}\n\t\tlen = arr.length;\n\t\tif ( len !== self.nDocs ) {\n\t\t\tthrow new Error( 'Length of object array has to equal the number of documents in the corpus.' );\n\t\t}\n\t\tfor ( i = 0; i < len; i++ ) {\n\t\t\tself.documents[ i ].attributes = arr[ i ];\n\t\t}\n\t\treturn self;\n\t}; // end METHOD setAttributes()\n\n\tself.init( docs );\n} // end FUNCTION Corpus()\n\n\n// PROTOTYPE METHODS //\n\n/**\n* Creates a string representation of the document collection.\n*\n* @returns {string} string representation with document excerpts\n*/\nCorpus.prototype.toString = function toString() {\n\tvar doc;\n\tvar nchars = 500;\n\tvar i;\n\tvar str = '';\n\tfor ( i = 0; i < this.nDocs; i++ ) {\n\t\tdoc = this.documents[ i ];\n\t\tstr += 'Document ' + i + ':\\n';\n\t\tstr += '\\t' + _(doc.text).truncate( nchars );\n\t\tstr += '\\n' + '\\u2500 '.repeat( 16 ) + '\\n';\n\t}\n\treturn str;\n}; // end METHOD toString()\n\n/**\n* Trims whitespace from the begining and end of the documents.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.trim = function trim() {\n\tthis.apply( function trimmer( text ) {\n\t\treturn _.trim( text );\n\t});\n\treturn this;\n}; // end METHOD trim()\n\n/**\n* Strips extra whitespace from documents.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.clean = function clean() {\n\tthis.apply( function cleaner( text ) {\n\t\treturn _.clean( text );\n\t});\n\treturn this;\n}; // end METHOD clean()\n\n/**\n* Transform documents in-place by converting their texts to lowe case.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.toLower = function toLower() {\n\tthis.apply( function lowerer( text ) {\n\t\treturn text.toLowerCase();\n\t});\n\treturn this;\n}; // end METHOD toLower()\n\n/**\n* Transform documents in-place by converting their texts to upper case.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.toUpper = function toUpper() {\n\tthis.apply( function upperer( text ) {\n\t\treturn text.toUpperCase();\n\t});\n\treturn this;\n}; // end METHOD toUpper()\n\n/**\n* Applies a stemming algorithm to reduce words to their root form. Mutates the corpus.\n*\n* @param {string} [type='Porter'] - used stemming algorithm\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.stem = function stem( type ) {\n\tthis.apply( function stemmer( text ) {\n\t\tif ( type === 'Lancaster' ) {\n\t\t\treturn lancasterStemmer( text );\n\t\t} else {\n\t\t\treturn porterStemmer( text );\n\t\t}\n\t});\n\treturn this;\n}; // end METHOD stem()\n\n/**\n* Applies transformation function to each document in-place.\n*\n* @param {Function} func - transformation function called with `text`, `attribute` and `id` arguments\n* @returns {Corpus} original corpus\n*/\nCorpus.prototype.apply = function apply( func ) {\n\tvar i;\n\tvar doc;\n\tfor ( i = 0; i < this.nDocs; i++ ) {\n\t\tdoc = this.documents[ i ];\n\t\tdoc.text = func( doc.text, doc.attributes, i );\n\t\tthis.documents[ i ] = doc;\n\t}\n\treturn this;\n}; // end METHOD apply()\n\n/**\n* Applies a transformation function to each document and returns new corpus.\n*\n* @param {Function} func - transformation function called with `text`, `attribute` and `id` arguments\n* @returns {Corpus} new corpus\n*/\nCorpus.prototype.map = function map( func ) {\n\tvar ret = new Corpus();\n\tvar i;\n\tvar doc;\n\tfor ( i = 0; i < this.nDocs; i++ ) {\n\t\tdoc = this.documents[ i ];\n\t\tdoc.text = func( doc.text, doc.attributes, i );\n\t\tret.addDoc( doc );\n\t}\n\treturn ret;\n}; // end METHOD map()\n\n/**\n* Filter out documents and return a new corpus with the remaining documents.\n*\n* @param {Function} func - filter function\n* @returns {Corpus} corpus without documents for which `func` has returned `false`\n*/\nCorpus.prototype.filter = function filter( func ) {\n\tvar ret = new Corpus();\n\tvar i;\n\tvar bool;\n\tvar doc;\n\tfor ( i = 0; i < this.nDocs; i++ ) {\n\t\tdoc = this.documents[ i ];\n\t\tbool = func( doc.text, doc.attributes, i );\n\t\tif ( bool ) {\n\t\t\tret.addDoc( doc );\n\t\t}\n\t}\n\treturn ret;\n}; // end METHOD filter()\n\n/**\n* Group documents by the unique elements returned from the supplied function.\n*\n* @param {Function} func - function invoked for each document with `text`, `attribute` and `id` arguments\n* @returns {Object} object holding multiple corpora indexed by the values returned by `FUN`\n*/\nCorpus.prototype.groupBy = function groupBy( func ) {\n\tvar corpora = {};\n\tvar group;\n\tvar doc;\n\tvar i;\n\tfor ( i = 0; i < this.nDocs; i++ ) {\n\t\tdoc = this.documents[ i ];\n\t\tgroup = func( doc.text, doc.attributes, i );\n\t\tif ( !corpora.hasOwnProperty( group ) ) {\n\t\t\tcorpora[ group ] = new Corpus( doc );\n\t\t} else {\n\t\t\tcorpora[ group ].addDoc( doc );\n\t\t}\n\t}\n\treturn corpora;\n}; // end METHOD groupBy()\n\n/**\n* Remove all exclamation marks, question marks, periods, commas, semicolons and - from the\n* documents. Mutates corpus.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.removeInterpunctuation = function removeInterpunctuation() {\n\tthis.apply( function remover( text ) {\n\t\treturn text.replace( /[\\!\\?\\.,;-]/g, ' ' );\n\t});\n\treturn this;\n}; // end METHOD removeInterpunctuation()\n\n/**\n* Remove all newlines from the corpus documents. Mutates corpus.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.removeNewlines = function removeNewlines() {\n\tthis.apply( function remover( text ) {\n\t\treturn text.replace( /\\r?\\n|\\r/g, ' ' );\n\t});\n\treturn this;\n}; // end METHOD removeNewlines()\n\n/**\n* Remove all digits from the document texts. Mutates corpus.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.removeDigits = function removeDigits() {\n\tthis.apply( function remover( text ) {\n\t\treturn text.replace( /\\d/g, '' );\n\t});\n\treturn this;\n}; // end METHOD removeDigits()\n\n/**\n* Replace all characters that are unrepresentable in Unicode. Mutates corpus.\n*\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.removeInvalidCharacters = function removeInvalidCharacters() {\n\tthis.apply( function remover( text ) {\n\t\treturn text.replace( /\\uFFFD/g, '' );\n\t});\n\treturn this;\n}; // end METHOD removeInvalidCharacters()\n\n/**\n* Removes the supplied words from all documents in the corpus. Mutates corpus.\n*\n* @param {Array} words - array of words to remove\n* @param {boolean} [caseInsensitive=false] - boolean indicating whether to ignore case when comparing words\n* @returns {Corpus} corpus reference\n*/\nCorpus.prototype.removeWords = function removeWords( words, caseInsensitive ) {\n\tvar myRegExp;\n\tvar options;\n\tvar doc;\n\tvar i;\n\tif ( !isArray( words ) ) {\n\t\tthrow new TypeError( 'invalid input argument. Words argument must be an array. Value: `' + words + '`.' );\n\t}\n\tif ( arguments.length > 1 ) {\n\t\tif ( !isBoolean( caseInsensitive ) ) {\n\t\t\tthrow new TypeError( 'invalid input argument. caseInsensitive argument must be a boolean primitive. Value: `' + caseInsensitive + '`.' );\n\t\t}\n\t}\n\n\tfor ( doc = 0; doc < this.nDocs; doc++ ) {\n\t\tfor ( i = 0; i < words.length; i++ ) {\n\t\t\t\toptions = caseInsensitive ? 'gi' : 'g';\n\t\t\t\tmyRegExp = new RegExp( '\\\\b' + words[i] + '\\\\b', options );\n\t\t\t\tthis.documents[ doc ].text = this.documents[ doc ].text.replace( myRegExp, '' );\n\t\t}\n\t}\n\t// Clean the newly created extra whitespace...\n\tthis.clean();\n\treturn this;\n}; // end METHOD removeWords()\n\n\n// EXPORTS //\n\nmodule.exports = Corpus;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/corpus.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/document.js":
+/*!*************************************************!*\
+  !*** ./node_modules/text-miner/lib/document.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar _ = __webpack_require__( /*! underscore */ \"./node_modules/underscore/underscore.js\" );\n// Import Underscore.string to separate object, because there are conflict functions (include, reverse, contains)\n_.str = __webpack_require__( /*! underscore.string */ \"./node_modules/underscore.string/index.js\" );\n// Mix in non-conflict functions to Underscore namespace if you want\n_.mixin( _.str.exports() );\n// All functions, include conflict, will be available through _.str object\n_.str.include( 'Underscore.string', 'string' ); // => true\n\nvar isArray = __webpack_require__( /*! validate.io-array-like */ \"./node_modules/validate.io-array-like/lib/index.js\" );\nvar isBoolean = __webpack_require__( /*! validate.io-boolean-primitive */ \"./node_modules/validate.io-boolean-primitive/lib/index.js\" );\n\n\n// DOCUMENT //\n\n/**\n* Creates a document instance.\n*\n* @constructor\n* @param {string} text - document text\n* @returns {Document} class instance\n*/\nfunction Document( text ) {\n\tthis.text = text;\n\tthis.attributes = {};\n} // end FUNCTION Document()\n\n\n// PROTOTYPE METHODS //\n\n/**\n* Returns a string representation of the document.\n*\n* @returns {string} document text\n*/\nDocument.prototype.toString = function toString() {\n\treturn this.text;\n};  // end METHOD attribute()\n\n/**\n* Applies transformation function to each document text in-place.\n*\n* @param {Function} func - transformation function called with `text` and `attribute` arguments\n* @returns {Document} document reference\n*/\nDocument.prototype.transform = function transform( func ) {\n\tthis.text = func( this.text, this.attributes );\n\treturn this;\n}; // end METHOD transform()\n\n/**\n* Trims whitespace from the begining and end of the document.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.trim = function trim() {\n\tthis.text = _.trim( this.text );\n\treturn this;\n}; // end METHOD trim()\n\n/**\n* Strips extra whitespace from document.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.clean = function clean() {\n\tthis.text = _.clean( this.text );\n\treturn this;\n}; // end METHOD clean()\n\n/**\n* Transform document by converting text to lowe-case.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.toLower = function toLower() {\n\tthis.text = this.text.toLowerCase();\n\treturn this;\n}; // end METHOD toLower()\n\n/**\n* Transform document by converting text to upper-case.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.toUpper = function toUpper() {\n\tthis.text = this.text.toUpperCase();\n\treturn this;\n}; // end METHOD toUpper()\n\n/**\n* Remove all exclamation marks, question marks, periods, commas, semicolons and - from the\n* document\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.removeInterpunctuation = function removeInterpunctuation() {\n\tthis.text =  this.text.replace( /[\\!\\?\\.,;-]/g, ' ' );\n\treturn this;\n}; // end METHOD removeInterpunctuation()\n\n/**\n* Remove all newlines from the document.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.removeNewlines = function removeNewlines() {\n\tthis.text = this.text.replace( /\\r?\\n|\\r/g, ' ' );\n\treturn this;\n}; // end METHOD removeNewlines()\n\n/**\n* Remove all digits from the document.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.removeDigits = function removeDigits() {\n\tthis.text = this.text.replace( /\\d/g, '' );\n\treturn this;\n}; // end METHOD removeDigits()\n\n/**\n* Replace all characters that are unrepresentable in Unicode.\n*\n* @returns {Document} document reference\n*/\nDocument.prototype.removeInvalidCharacters = function removeInvalidCharacters() {\n\tthis.text = this.text.replace( /\\uFFFD/g, '' );\n\treturn this;\n}; // end METHOD removeInvalidCharacters()\n\n/**\n* Removes the supplied words from the documents.\n*\n* @param {Array} words - array of words to remove\n* @param {boolean} [caseInsensitive=false] - boolean indicating whether to ignore case when comparing words\n* @returns {Document} document reference\n*/\nDocument.prototype.removeWords = function removeWords( words, caseInsensitive ) {\n\tif ( !isArray( words ) ) {\n\t\tthrow new TypeError( 'invalid input argument. Words argument must be an array. Value: `' + words + '`.' );\n\t}\n\tif ( arguments.length > 1 ) {\n\t\tif ( !isBoolean( caseInsensitive ) ) {\n\t\t\tthrow new TypeError( 'invalid input argument. caseInsensitive argument must be a boolean primitive. Value: `' + caseInsensitive + '`.' );\n\t\t}\n\t}\n\tvar i;\n\tfor ( i = 0; i < words.length; i++ ) {\n\t\tvar options = caseInsensitive ? 'gi' : 'g';\n\t\tvar myRegExp = new RegExp( '\\\\b' + words[i] + '\\\\b', options );\n\t\tthis.text = this.text.replace( myRegExp, '' );\n\t}\n\t// Clean the newly created extra whitespace...\n\tthis.clean();\n\treturn this;\n}; // end METHOD removeWords()\n\n/**\n* Removes the supplied words from the document without checking input argument types.\n*\n* @param {Array} words - array of words to remove\n* @param {boolean} [caseInsensitive=false] - boolean indicating whether to ignore case when comparing words\n* @returns {Document} document reference\n*/\nDocument.prototype.removeWordsUnsafe = function removeWordsUnsafe( words, caseInsensitive ) {\n\tvar myRegExp;\n\tvar options;\n\tvar i;\n\t\n\tfor ( i = 0; i < words.length; i++ ) {\n\t\toptions = caseInsensitive ? 'gi' : 'g';\n\t\tmyRegExp = new RegExp( '\\\\b' + words[i] + '\\\\b', options );\n\t\tthis.text = this.text.replace( myRegExp, '' );\n\t}\n\t// Clean the newly created extra whitespace...\n\tthis.clean();\n\treturn this;\n}; // end METHOD removeWordsUnsafe()\n\n\n// EXPORTS //\n\nmodule.exports = Document;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/document.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/dtm.js":
+/*!********************************************!*\
+  !*** ./node_modules/text-miner/lib/dtm.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar _ = __webpack_require__( /*! underscore */ \"./node_modules/underscore/underscore.js\" );\n\n\n// DOCUMENT-TERM MATRIX //\n\n/**\n* Creates a document-term matrix object.\n*\n* @constructor\n* @param {Corpus} corpus - input corpus\n*/\nfunction DocumentTermMatrix( corpus ) {\n\n\tif ( !( this instanceof DocumentTermMatrix ) ) {\n\t\treturn new DocumentTermMatrix(corpus);\n\t}\n\n\tvar self = this;\n\n\tthis.vocabulary = [];\n\tthis.data = [];\n\n\tObject.defineProperty( this, 'nDocs', {\n\t\tget: function() {\n\t\t\treturn this.data.length;\n\t\t},\n\t\tenumerable: true\n\t});\n\n\tObject.defineProperty( this, 'nTerms', {\n\t\tget: function() {\n\t\t\treturn this.vocabulary.length;\n\t\t},\n\t\tenumerable: true\n\t});\n\n\tthis.removeSparseTerms = function removeSparseTerms( percent ) {\n\t\tvar flaggedForKeeping = [];\n\t\tvar newVocabulary;\n\t\tvar counter;\n\t\tvar newVec;\n\t\tvar doc;\n\t\tvar w;\n\t\tvar i;\n\t\tvar j;\n\t\tvar d;\n\t\tvar d2;\n\n\t\tfor ( w = 0; w < self.vocabulary.length; w++ ) {\n\t\t\tcounter = 0;\n\t\t\tfor ( d = 0; d < self.data.length; d++ ){\n\t\t\t\tdoc = self.data[d];\n\t\t\t\tif ( doc !== undefined && doc[w] !== undefined ) {\n\t\t\t\t\tcounter++;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif ( counter / self.data.length >= percent ) {\n\t\t\t\tflaggedForKeeping.push(w);\n\t\t\t}\n\t\t}\n\n\t\tnewVocabulary = [];\n\t\tfor ( i = 0; i < flaggedForKeeping.length; i++ ) {\n\t\t\tnewVocabulary.push( self.vocabulary[ flaggedForKeeping[i] ] );\n\t\t}\n\t\tfor ( d2 = 0; d2 < self.data.length; d2++ ) {\n\t\t\tnewVec = [];\n\t\t\tfor ( j = 0; j < flaggedForKeeping.length; j++ ) {\n\t\t\t\tnewVec.push( self.data[d2][ flaggedForKeeping[j] ] );\n\t\t\t}\n\t\t\tself.data[d2] = newVec;\n\t\t}\n\n\t\tself.vocabulary = newVocabulary;\n\t\treturn self;\n\t};\n\n\tthis.weighting = function weighting( fun ) {\n\t\tself.data = fun( self.data );\n\t\treturn self;\n\t};\n\n\t/**\n\t* Function called upon creating a DocumentTermMatrix instances\n\t*\n\t* @param  {Corpus} corpus - input corpus\n\t* @return {DocumentTermMatrix} created document-term matrix\n\t*/\n\tthis.init = function init( corpus ) {\n\t\tvar current_word;\n\t\tvar wordArray;\n\t\tvar index;\n\t\tvar words;\n\t\tvar doc;\n\t\tvar i;\n\t\tvar j;\n\n\t\tfor ( i = 0; i < corpus.nDocs; i++ ) {\n\t\t\tdoc = corpus.documents[ i ];\n\t\t\twordArray = doc.text.split( ' ' );\n\t\t\twords = [];\n\t\t\tfor ( j = 0; j < wordArray.length; j++ ) {\n\t\t\t\tcurrent_word = wordArray[ j ];\n\t\t\t\tindex = self.vocabulary.indexOf( current_word );\n\t\t\t\tif ( index > -1 ) {\n\t\t\t\t\twords[ index ] = words[ index ] + 1 || 1;\n\t\t\t\t} else {\n\t\t\t\t\twords[ self.vocabulary.length ] = 1;\n\t\t\t\t\tself.vocabulary.push( current_word );\n\t\t\t\t}\n\t\t\t}\n\t\t\tself.data.push( words );\n\t\t}\n\t\tfor ( i = 0; i < self.data.length; i++ ) {\n\t\t\tdoc = self.data[ i ];\n\t\t\t// Ensure that all rows in data have same length:\n\t\t\tdoc.length = self.vocabulary.length;\n\t\t}\n\t};\n\tself.init( corpus );\n} // end FUNCTION DocumentTermMatrix()\n\n\n// PROTOTYPE METHODS //\n\nDocumentTermMatrix.prototype.fill_zeros = __webpack_require__( /*! ./fill_zeros.js */ \"./node_modules/text-miner/lib/fill_zeros.js\" );\n\n/**\n* Find the `n` most frequent terms in the terms matrix and return them as a sorted array\n* of objects with `word` and `count` keys.\n*\n* @param  {number} n - number indicating how many terms should be returned\n* @return {Array} array of objects with `word` and `count` keys\n*/\nDocumentTermMatrix.prototype.findFreqTerms = function findFreqTerms( n ) {\n\tvar sortedWordArray;\n\tvar wordArray = [];\n\tvar count;\n\tvar obj;\n\tvar w;\n\tvar d;\n\n\tfor ( w = 0; w < this.nTerms; w++ ) {\n\t\tcount = 0;\n\t\tfor ( d = 0; d < this.nDocs; d++ ) {\n\t\t\tif ( this.data[ d ][ w ] ) {\n\t\t\t\tcount += this.data[ d ][ w ];\n\t\t\t}\n\t\t}\n\t\tobj = {};\n\t\tobj.word = this.vocabulary[ w ];\n\t\tobj.count = count;\n\t\tif ( count >= n ) {\n\t\t\twordArray.push( obj );\n\t\t}\n\t}\n\n\tsortedWordArray = _.sortBy( wordArray, function by( obj ) {\n\t\treturn obj.word;\n\t});\n\treturn sortedWordArray;\n}; // end METHOD findFreqTerms()\n\n\n// EXPORTS //\n\nmodule.exports = DocumentTermMatrix;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/dtm.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/expand_contractions.js":
+/*!************************************************************!*\
+  !*** ./node_modules/text-miner/lib/expand_contractions.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// VARIABLES //\n\nvar CONTRACTIONS = __webpack_require__( /*! ./../data/contractions.json */ \"./node_modules/text-miner/data/contractions.json\" );\n\n\n// EXPAND CONTRACTIONS //\n\n/**\n* Expand contractions inside a string, e.g. haven't => have not.\n*\n* @param {string} str - input string\n* @returns {string} string with expanded contractions\n*/\nfunction expandContractions( str ) {\n\tvar key;\n\t/*jshint -W089 */\n\tfor ( key in CONTRACTIONS ) {\n\t\tstr = str.replace( new RegExp( key, 'gi' ), CONTRACTIONS[key][0] );\n\t}\n\treturn str;\n} // end FUNCTION expandContractions()\n\n\n// EXPORTS //\n\nmodule.exports = expandContractions;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/expand_contractions.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/fill_zeros.js":
+/*!***************************************************!*\
+  !*** ./node_modules/text-miner/lib/fill_zeros.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n/**\n* Replaces undefined values in the `data` array-of-arrays with zero.\n*\n* @returns {(DocumentTermMatrix|TermDocumentMatrix)} terms object\n*/\nfunction fill_zeros() {\n\t/* jshint -W040 */\n\tvar i;\n\tvar j;\n\tfor ( i = 0; i < this.data.length; i++ ) {\n\t\tfor ( j = 0; j < this.data[0].length; j++ ) {\n\t\t\tif ( this.data[i][j] === undefined ) {\n\t\t\t\tthis.data[i][j] = 0;\n\t\t\t}\n\t\t}\n\t}\n\treturn this;\n} // end METHOD fill_zeros()\n\n\n// EXPORTS //\n\nmodule.exports = fill_zeros;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/fill_zeros.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/text-miner/lib/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar setReadOnly = __webpack_require__( /*! utils-define-read-only-property */ \"./node_modules/utils-define-read-only-property/lib/index.js\" );\n\n\n// NAMESPACE //\n\nvar ns = {};\n\n\n// CLASSES //\n\nsetReadOnly( ns, 'Corpus', __webpack_require__( /*! ./corpus.js */ \"./node_modules/text-miner/lib/corpus.js\" ) );\nsetReadOnly( ns, 'Document', __webpack_require__( /*! ./document.js */ \"./node_modules/text-miner/lib/document.js\" ) );\nsetReadOnly( ns, 'DocumentTermMatrix', __webpack_require__( /*! ./dtm.js */ \"./node_modules/text-miner/lib/dtm.js\" ) );\nsetReadOnly( ns, 'TermDocumentMatrix', __webpack_require__( /*! ./tdm.js */ \"./node_modules/text-miner/lib/tdm.js\" ) );\n\n\n// FUNCTIONS //\n\nsetReadOnly( ns, 'weightTfIdf', __webpack_require__( /*! ./weight_tf_idf.js */ \"./node_modules/text-miner/lib/weight_tf_idf.js\" ) );\nsetReadOnly( ns, 'expandContractions', __webpack_require__( /*! ./expand_contractions.js */ \"./node_modules/text-miner/lib/expand_contractions.js\" ) );\n\n\n// DATA //\n\nsetReadOnly( ns, 'CONTRACTIONS', __webpack_require__( /*! ./../data/contractions.json */ \"./node_modules/text-miner/data/contractions.json\" ) );\nsetReadOnly( ns, 'STOPWORDS', __webpack_require__( /*! ./../data/stopwords.json */ \"./node_modules/text-miner/data/stopwords.json\" ) );\n\n\n// EXPORTS //\n\nmodule.exports = ns;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/tdm.js":
+/*!********************************************!*\
+  !*** ./node_modules/text-miner/lib/tdm.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar _ = __webpack_require__( /*! underscore */ \"./node_modules/underscore/underscore.js\" );\n\n\n// TERM-DOCUMENT MATRIX //\n\n/**\n* Creates a term-document matrix object.\n*\n* @constructor\n* @param {Object} corpus - an instance of class Corpus\n*/\nfunction TermDocumentMatrix( corpus ) {\n\n\tif ( !( this instanceof TermDocumentMatrix ) ) {\n\t\treturn new TermDocumentMatrix(corpus);\n\t}\n\n\tvar self = this;\n\n\tthis.vocabulary = [];\n\tthis.dtm = [];\n\n\tObject.defineProperty( this, 'nDocs', {\n\t\tget: function() {\n\t\t\treturn this.dtm.length;\n\t\t},\n\t\tenumerable: true\n\t});\n\n\tObject.defineProperty( this, 'nTerms', {\n\t\tget: function() {\n\t\t\treturn this.vocabulary.length;\n\t\t},\n\t\tenumerable: true\n\t});\n\n\tthis.fill_zeros = function() {\n\t\tvar word;\n\t\tvar doc;\n\t\tfor ( doc = 0; doc < self.dtm.length; doc++ ) {\n\t\t\tfor ( word = 0; word < self.dtm[0].length; word++ ) {\n\t\t\t\tif ( self.dtm[doc][word] === undefined ) {\n\t\t\t\t\tself.dtm[doc][word] = 0;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn self;\n\t};\n\n\tfunction _wordFreq( wordIndex ) {\n\t\tvar mapping = self.dtm.map( function( doc ) {\n\t\t\treturn doc[wordIndex] || 0;\n\t\t});\n\t\tvar reducing = mapping.reduce( function( a, b ) {\n\t\t\treturn a + b;\n\t\t});\n\t\treturn reducing;\n\t}\n\n\tthis.findFreqTerms = function findFreqTerms( n ) {\n\t\tvar sortedWordArray;\n\t\tvar wordCount;\n\t\tvar wordArray = [];\n\t\tvar obj;\n\t\tvar w;\n\n\t\tfor ( w = 0; w < self.vocabulary.length; w++ ) {\n\t\t\twordCount = _wordFreq(w);\n\t\t\tobj = {};\n\t\t\tobj.word = self.vocabulary[w];\n\t\t\tobj.count = wordCount;\n\t\t\tif ( wordCount >= n ) {\n\t\t\t\twordArray.push(obj);\n\t\t\t}\n\t\t}\n\n\t\tsortedWordArray = _.sortBy( wordArray, function( obj ) {\n\t\t\treturn obj.word;\n\t\t});\n\t\treturn sortedWordArray;\n\t};\n\n\tthis.removeSparseTerms = function removeSparseTerms( percent ) {\n\t\tvar flaggedForKeeping = [];\n\t\tvar newVocabulary;\n\t\tvar counter;\n\t\tvar newVec;\n\t\tvar doc;\n\t\tvar d;\n\t\tvar d2;\n\t\tvar i;\n\t\tvar j;\n\t\tvar w;\n\n\t\tfor ( w = 0; w < self.vocabulary.length; w++ ) {\n\t\t\tcounter = 0;\n\t\t\tfor ( d = 0; d < self.dtm.length; d++ ){\n\t\t\t\tdoc = self.dtm[d];\n\t\t\t\tif ( doc !== undefined && doc[w] !== undefined ) {\n\t\t\t\t\tcounter++;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif ( counter / self.dtm.length >= percent ) {\n\t\t\t\tflaggedForKeeping.push(w);\n\t\t\t}\n\t\t}\n\n\t\tnewVocabulary = [];\n\t\tfor ( i = 0; i < flaggedForKeeping.length; i++ ) {\n\t\t\tnewVocabulary.push( self.vocabulary[ flaggedForKeeping[i] ] );\n\t\t}\n\n\t\tfor ( d2 = 0; d2 < self.dtm.length; d2++ ) {\n\t\t\tnewVec = [];\n\t\t\tfor ( j = 0; j < flaggedForKeeping.length; j++ ) {\n\t\t\t\tnewVec.push( self.dtm[d2][ flaggedForKeeping[j] ] );\n\t\t\t}\n\t\t\tself.dtm[d2] = newVec;\n\t\t}\n\n\t\tself.vocabulary = newVocabulary;\n\t\treturn self;\n\t};\n\n\tthis.weighting = function weighting( fun ) {\n\t\tself.dtm = fun( self.dtm );\n\t\treturn self;\n\t};\n\n\t// initialization\n\tthis.init = function init( corpus ) {\n\t\tvar current_word;\n\t\tvar wordArray;\n\t\tvar words;\n\t\tvar index;\n\t\tvar doc;\n\t\tvar i;\n\t\tvar j;\n\n\t\tfor ( i = 0; i < corpus.nDocs; i++ ) {\n\t\t\tdoc = corpus.documents[ i ];\n\t\t\twordArray = doc.text.split( ' ' );\n\t\t\twords = [];\n\t\t\tfor ( j = 0; j < wordArray.length; j++ ) {\n\t\t\t\tcurrent_word = wordArray[ j ];\n\t\t\t\tindex = self.vocabulary.indexOf( current_word );\n\t\t\t\tif ( index > -1 ) {\n\t\t\t\t\t\twords[ index ] = words[ index ] + 1 || 1;\n\t\t\t\t} else {\n\t\t\t\t\twords[ self.vocabulary.length ] = 1;\n\t\t\t\t\tself.vocabulary.push( current_word );\n\t\t\t\t}\n\t\t\t}\n\t\t\tself.dtm.push( words );\n\t\t}\n\t\tfor ( i = 0; i < self.dtm.length; i++ ) {\n\t\t\tdoc = self.dtm[ i ];\n\t\t\tdoc.length = self.vocabulary.length; // ensure that all rows in dtm have same length\n\t\t}\n\t};\n\tself.init( corpus );\n} // end FUNCTION TermDocumentMatrix()\n\n\n// EXPORTS //\n\nmodule.exports = TermDocumentMatrix;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/tdm.js?");
+
+/***/ }),
+
+/***/ "./node_modules/text-miner/lib/weight_tf_idf.js":
+/*!******************************************************!*\
+  !*** ./node_modules/text-miner/lib/weight_tf_idf.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// FUNCTIONS //\n\nvar ln = Math.log;\n\n\n// WEIGHT TF-IDF //\n\n/**\n* Weights a document-term matrix (stored as an array-of-arrays) by\n* term frequency - inverse document frequency.\n*\n* @param {Array} dtm - input document-term matrix (array-of-arrays)\n* @returns {Array} mutated document-term matrix object (array-of-arrays)\n*/\nfunction weightTfIdf( dtm ) {\n\tvar word_doc_freq = [];\n\tvar count;\n\tvar word;\n\tvar doc;\n\tvar idf;\n\tvar d;\n\tvar w;\n\n\tfor ( w = 0; w < dtm[0].length; w++ ) {\n\t\tcount = 0;\n\t\tfor ( d = 0; d < dtm.length; d++ ) {\n\t\t\tif ( dtm[d][w] !== undefined && dtm[d][w] > 0 ) {\n\t\t\t\tcount++;\n\t\t\t}\n\t\t}\n\t\tword_doc_freq.push( count );\n\t}\n\n\tfor ( doc = 0; doc < dtm.length; doc++ ) {\n\t\tfor ( word = 0; word < dtm[0].length; word++ ){\n\t\t\tidf = ln( dtm.length ) - ln( 1 + word_doc_freq[word] );\n\t\t\tif ( dtm[doc][word] !== undefined ) {\n\t\t\t\tdtm[doc][word] = dtm[doc][word] * idf;\n\t\t\t}\n\t\t}\n\t}\n\treturn dtm;\n} // end FUNCTION weightTfIdf()\n\n\n// EXPORTS //\n\nmodule.exports = weightTfIdf;\n\n\n//# sourceURL=webpack:///./node_modules/text-miner/lib/weight_tf_idf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/camelize.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/camelize.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\nvar decap = __webpack_require__(/*! ./decapitalize */ \"./node_modules/underscore.string/decapitalize.js\");\n\nmodule.exports = function camelize(str, decapitalize) {\n  str = trim(str).replace(/[-_\\s]+(.)?/g, function(match, c) {\n    return c ? c.toUpperCase() : '';\n  });\n\n  if (decapitalize === true) {\n    return decap(str);\n  } else {\n    return str;\n  }\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/camelize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/capitalize.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/capitalize.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function capitalize(str, lowercaseRest) {\n  str = makeString(str);\n  var remainingChars = !lowercaseRest ? str.slice(1) : str.slice(1).toLowerCase();\n\n  return str.charAt(0).toUpperCase() + remainingChars;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/capitalize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/chars.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/chars.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function chars(str) {\n  return makeString(str).split('');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/chars.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/chop.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/chop.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function chop(str, step) {\n  if (str == null) return [];\n  str = String(str);\n  step = ~~step;\n  return step > 0 ? str.match(new RegExp('.{1,' + step + '}', 'g')) : [str];\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/chop.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/classify.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/classify.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var capitalize = __webpack_require__(/*! ./capitalize */ \"./node_modules/underscore.string/capitalize.js\");\nvar camelize = __webpack_require__(/*! ./camelize */ \"./node_modules/underscore.string/camelize.js\");\nvar makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function classify(str) {\n  str = makeString(str);\n  return capitalize(camelize(str.replace(/[\\W_]/g, ' ')).replace(/\\s/g, ''));\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/classify.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/clean.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/clean.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nmodule.exports = function clean(str) {\n  return trim(str).replace(/\\s\\s+/g, ' ');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/clean.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/cleanDiacritics.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/underscore.string/cleanDiacritics.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("\nvar makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nvar from  = 'ąàáäâãåæăćčĉęèéëêĝĥìíïîĵłľńňòóöőôõðøśșşšŝťțţŭùúüűûñÿýçżźž',\n  to    = 'aaaaaaaaaccceeeeeghiiiijllnnoooooooossssstttuuuuuunyyczzz';\n\nfrom += from.toUpperCase();\nto += to.toUpperCase();\n\nto = to.split('');\n\n// for tokens requireing multitoken output\nfrom += 'ß';\nto.push('ss');\n\n\nmodule.exports = function cleanDiacritics(str) {\n  return makeString(str).replace(/.{1}/g, function(c){\n    var index = from.indexOf(c);\n    return index === -1 ? c : to[index];\n  });\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/cleanDiacritics.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/count.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/count.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function(str, substr) {\n  str = makeString(str);\n  substr = makeString(substr);\n\n  if (str.length === 0 || substr.length === 0) return 0;\n  \n  return str.split(substr).length - 1;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/count.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/dasherize.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore.string/dasherize.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nmodule.exports = function dasherize(str) {\n  return trim(str).replace(/([A-Z])/g, '-$1').replace(/[-_\\s]+/g, '-').toLowerCase();\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/dasherize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/decapitalize.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore.string/decapitalize.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function decapitalize(str) {\n  str = makeString(str);\n  return str.charAt(0).toLowerCase() + str.slice(1);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/decapitalize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/dedent.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore.string/dedent.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nfunction getIndent(str) {\n  var matches = str.match(/^[\\s\\\\t]*/gm);\n  var indent = matches[0].length;\n  \n  for (var i = 1; i < matches.length; i++) {\n    indent = Math.min(matches[i].length, indent);\n  }\n\n  return indent;\n}\n\nmodule.exports = function dedent(str, pattern) {\n  str = makeString(str);\n  var indent = getIndent(str);\n  var reg;\n\n  if (indent === 0) return str;\n\n  if (typeof pattern === 'string') {\n    reg = new RegExp('^' + pattern, 'gm');\n  } else {\n    reg = new RegExp('^[ \\\\t]{' + indent + '}', 'gm');\n  }\n\n  return str.replace(reg, '');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/dedent.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/endsWith.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/endsWith.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar toPositive = __webpack_require__(/*! ./helper/toPositive */ \"./node_modules/underscore.string/helper/toPositive.js\");\n\nmodule.exports = function endsWith(str, ends, position) {\n  str = makeString(str);\n  ends = '' + ends;\n  if (typeof position == 'undefined') {\n    position = str.length - ends.length;\n  } else {\n    position = Math.min(toPositive(position), str.length) - ends.length;\n  }\n  return position >= 0 && str.indexOf(ends, position) === position;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/endsWith.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/escapeHTML.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/escapeHTML.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar escapeChars = __webpack_require__(/*! ./helper/escapeChars */ \"./node_modules/underscore.string/helper/escapeChars.js\");\n\nvar regexString = '[';\nfor(var key in escapeChars) {\n  regexString += key;\n}\nregexString += ']';\n\nvar regex = new RegExp( regexString, 'g');\n\nmodule.exports = function escapeHTML(str) {\n\n  return makeString(str).replace(regex, function(m) {\n    return '&' + escapeChars[m] + ';';\n  });\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/escapeHTML.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/exports.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/exports.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function() {\n  var result = {};\n\n  for (var prop in this) {\n    if (!this.hasOwnProperty(prop) || prop.match(/^(?:include|contains|reverse|join|map|wrap)$/)) continue;\n    result[prop] = this[prop];\n  }\n\n  return result;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/exports.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/adjacent.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/underscore.string/helper/adjacent.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function adjacent(str, direction) {\n  str = makeString(str);\n  if (str.length === 0) {\n    return '';\n  }\n  return str.slice(0, -1) + String.fromCharCode(str.charCodeAt(str.length - 1) + direction);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/adjacent.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/defaultToWhiteSpace.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/defaultToWhiteSpace.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var escapeRegExp = __webpack_require__(/*! ./escapeRegExp */ \"./node_modules/underscore.string/helper/escapeRegExp.js\");\n\nmodule.exports = function defaultToWhiteSpace(characters) {\n  if (characters == null)\n    return '\\\\s';\n  else if (characters.source)\n    return characters.source;\n  else\n    return '[' + escapeRegExp(characters) + ']';\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/defaultToWhiteSpace.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/escapeChars.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/escapeChars.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/* We're explicitly defining the list of entities we want to escape.\nnbsp is an HTML entity, but we don't want to escape all space characters in a string, hence its omission in this map.\n\n*/\nvar escapeChars = {\n  '¢' : 'cent',\n  '£' : 'pound',\n  '¥' : 'yen',\n  '€': 'euro',\n  '©' :'copy',\n  '®' : 'reg',\n  '<' : 'lt',\n  '>' : 'gt',\n  '\"' : 'quot',\n  '&' : 'amp',\n  '\\'' : '#39'\n};\n\nmodule.exports = escapeChars;\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/escapeChars.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/escapeRegExp.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/escapeRegExp.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function escapeRegExp(str) {\n  return makeString(str).replace(/([.*+?^=!:${}()|[\\]\\/\\\\])/g, '\\\\$1');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/escapeRegExp.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/htmlEntities.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/htmlEntities.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/*\nWe're explicitly defining the list of entities that might see in escape HTML strings\n*/\nvar htmlEntities = {\n  nbsp: ' ',\n  cent: '¢',\n  pound: '£',\n  yen: '¥',\n  euro: '€',\n  copy: '©',\n  reg: '®',\n  lt: '<',\n  gt: '>',\n  quot: '\"',\n  amp: '&',\n  apos: '\\''\n};\n\nmodule.exports = htmlEntities;\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/htmlEntities.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/makeString.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/makeString.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("/**\n * Ensure some object is a coerced to a string\n **/\nmodule.exports = function makeString(object) {\n  if (object == null) return '';\n  return '' + object;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/makeString.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/strRepeat.js":
+/*!************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/strRepeat.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function strRepeat(str, qty){\n  if (qty < 1) return '';\n  var result = '';\n  while (qty > 0) {\n    if (qty & 1) result += str;\n    qty >>= 1, str += str;\n  }\n  return result;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/strRepeat.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/helper/toPositive.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/underscore.string/helper/toPositive.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function toPositive(number) {\n  return number < 0 ? 0 : (+number || 0);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/helper/toPositive.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/humanize.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/humanize.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var capitalize = __webpack_require__(/*! ./capitalize */ \"./node_modules/underscore.string/capitalize.js\");\nvar underscored = __webpack_require__(/*! ./underscored */ \"./node_modules/underscore.string/underscored.js\");\nvar trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nmodule.exports = function humanize(str) {\n  return capitalize(trim(underscored(str).replace(/_id$/, '').replace(/_/g, ' ')));\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/humanize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/include.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/include.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function include(str, needle) {\n  if (needle === '') return true;\n  return makeString(str).indexOf(needle) !== -1;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/include.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/*\n* Underscore.string\n* (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>\n* Underscore.string is freely distributable under the terms of the MIT license.\n* Documentation: https://github.com/epeli/underscore.string\n* Some code is borrowed from MooTools and Alexandru Marasteanu.\n* Version '3.3.4'\n* @preserve\n*/\n\n\n\nfunction s(value) {\n  /* jshint validthis: true */\n  if (!(this instanceof s)) return new s(value);\n  this._wrapped = value;\n}\n\ns.VERSION = '3.3.4';\n\ns.isBlank          = __webpack_require__(/*! ./isBlank */ \"./node_modules/underscore.string/isBlank.js\");\ns.stripTags        = __webpack_require__(/*! ./stripTags */ \"./node_modules/underscore.string/stripTags.js\");\ns.capitalize       = __webpack_require__(/*! ./capitalize */ \"./node_modules/underscore.string/capitalize.js\");\ns.decapitalize     = __webpack_require__(/*! ./decapitalize */ \"./node_modules/underscore.string/decapitalize.js\");\ns.chop             = __webpack_require__(/*! ./chop */ \"./node_modules/underscore.string/chop.js\");\ns.trim             = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\ns.clean            = __webpack_require__(/*! ./clean */ \"./node_modules/underscore.string/clean.js\");\ns.cleanDiacritics  = __webpack_require__(/*! ./cleanDiacritics */ \"./node_modules/underscore.string/cleanDiacritics.js\");\ns.count            = __webpack_require__(/*! ./count */ \"./node_modules/underscore.string/count.js\");\ns.chars            = __webpack_require__(/*! ./chars */ \"./node_modules/underscore.string/chars.js\");\ns.swapCase         = __webpack_require__(/*! ./swapCase */ \"./node_modules/underscore.string/swapCase.js\");\ns.escapeHTML       = __webpack_require__(/*! ./escapeHTML */ \"./node_modules/underscore.string/escapeHTML.js\");\ns.unescapeHTML     = __webpack_require__(/*! ./unescapeHTML */ \"./node_modules/underscore.string/unescapeHTML.js\");\ns.splice           = __webpack_require__(/*! ./splice */ \"./node_modules/underscore.string/splice.js\");\ns.insert           = __webpack_require__(/*! ./insert */ \"./node_modules/underscore.string/insert.js\");\ns.replaceAll       = __webpack_require__(/*! ./replaceAll */ \"./node_modules/underscore.string/replaceAll.js\");\ns.include          = __webpack_require__(/*! ./include */ \"./node_modules/underscore.string/include.js\");\ns.join             = __webpack_require__(/*! ./join */ \"./node_modules/underscore.string/join.js\");\ns.lines            = __webpack_require__(/*! ./lines */ \"./node_modules/underscore.string/lines.js\");\ns.dedent           = __webpack_require__(/*! ./dedent */ \"./node_modules/underscore.string/dedent.js\");\ns.reverse          = __webpack_require__(/*! ./reverse */ \"./node_modules/underscore.string/reverse.js\");\ns.startsWith       = __webpack_require__(/*! ./startsWith */ \"./node_modules/underscore.string/startsWith.js\");\ns.endsWith         = __webpack_require__(/*! ./endsWith */ \"./node_modules/underscore.string/endsWith.js\");\ns.pred             = __webpack_require__(/*! ./pred */ \"./node_modules/underscore.string/pred.js\");\ns.succ             = __webpack_require__(/*! ./succ */ \"./node_modules/underscore.string/succ.js\");\ns.titleize         = __webpack_require__(/*! ./titleize */ \"./node_modules/underscore.string/titleize.js\");\ns.camelize         = __webpack_require__(/*! ./camelize */ \"./node_modules/underscore.string/camelize.js\");\ns.underscored      = __webpack_require__(/*! ./underscored */ \"./node_modules/underscore.string/underscored.js\");\ns.dasherize        = __webpack_require__(/*! ./dasherize */ \"./node_modules/underscore.string/dasherize.js\");\ns.classify         = __webpack_require__(/*! ./classify */ \"./node_modules/underscore.string/classify.js\");\ns.humanize         = __webpack_require__(/*! ./humanize */ \"./node_modules/underscore.string/humanize.js\");\ns.ltrim            = __webpack_require__(/*! ./ltrim */ \"./node_modules/underscore.string/ltrim.js\");\ns.rtrim            = __webpack_require__(/*! ./rtrim */ \"./node_modules/underscore.string/rtrim.js\");\ns.truncate         = __webpack_require__(/*! ./truncate */ \"./node_modules/underscore.string/truncate.js\");\ns.prune            = __webpack_require__(/*! ./prune */ \"./node_modules/underscore.string/prune.js\");\ns.words            = __webpack_require__(/*! ./words */ \"./node_modules/underscore.string/words.js\");\ns.pad              = __webpack_require__(/*! ./pad */ \"./node_modules/underscore.string/pad.js\");\ns.lpad             = __webpack_require__(/*! ./lpad */ \"./node_modules/underscore.string/lpad.js\");\ns.rpad             = __webpack_require__(/*! ./rpad */ \"./node_modules/underscore.string/rpad.js\");\ns.lrpad            = __webpack_require__(/*! ./lrpad */ \"./node_modules/underscore.string/lrpad.js\");\ns.sprintf          = __webpack_require__(/*! ./sprintf */ \"./node_modules/underscore.string/sprintf.js\");\ns.vsprintf         = __webpack_require__(/*! ./vsprintf */ \"./node_modules/underscore.string/vsprintf.js\");\ns.toNumber         = __webpack_require__(/*! ./toNumber */ \"./node_modules/underscore.string/toNumber.js\");\ns.numberFormat     = __webpack_require__(/*! ./numberFormat */ \"./node_modules/underscore.string/numberFormat.js\");\ns.strRight         = __webpack_require__(/*! ./strRight */ \"./node_modules/underscore.string/strRight.js\");\ns.strRightBack     = __webpack_require__(/*! ./strRightBack */ \"./node_modules/underscore.string/strRightBack.js\");\ns.strLeft          = __webpack_require__(/*! ./strLeft */ \"./node_modules/underscore.string/strLeft.js\");\ns.strLeftBack      = __webpack_require__(/*! ./strLeftBack */ \"./node_modules/underscore.string/strLeftBack.js\");\ns.toSentence       = __webpack_require__(/*! ./toSentence */ \"./node_modules/underscore.string/toSentence.js\");\ns.toSentenceSerial = __webpack_require__(/*! ./toSentenceSerial */ \"./node_modules/underscore.string/toSentenceSerial.js\");\ns.slugify          = __webpack_require__(/*! ./slugify */ \"./node_modules/underscore.string/slugify.js\");\ns.surround         = __webpack_require__(/*! ./surround */ \"./node_modules/underscore.string/surround.js\");\ns.quote            = __webpack_require__(/*! ./quote */ \"./node_modules/underscore.string/quote.js\");\ns.unquote          = __webpack_require__(/*! ./unquote */ \"./node_modules/underscore.string/unquote.js\");\ns.repeat           = __webpack_require__(/*! ./repeat */ \"./node_modules/underscore.string/repeat.js\");\ns.naturalCmp       = __webpack_require__(/*! ./naturalCmp */ \"./node_modules/underscore.string/naturalCmp.js\");\ns.levenshtein      = __webpack_require__(/*! ./levenshtein */ \"./node_modules/underscore.string/levenshtein.js\");\ns.toBoolean        = __webpack_require__(/*! ./toBoolean */ \"./node_modules/underscore.string/toBoolean.js\");\ns.exports          = __webpack_require__(/*! ./exports */ \"./node_modules/underscore.string/exports.js\");\ns.escapeRegExp     = __webpack_require__(/*! ./helper/escapeRegExp */ \"./node_modules/underscore.string/helper/escapeRegExp.js\");\ns.wrap             = __webpack_require__(/*! ./wrap */ \"./node_modules/underscore.string/wrap.js\");\ns.map              = __webpack_require__(/*! ./map */ \"./node_modules/underscore.string/map.js\");\n\n// Aliases\ns.strip     = s.trim;\ns.lstrip    = s.ltrim;\ns.rstrip    = s.rtrim;\ns.center    = s.lrpad;\ns.rjust     = s.lpad;\ns.ljust     = s.rpad;\ns.contains  = s.include;\ns.q         = s.quote;\ns.toBool    = s.toBoolean;\ns.camelcase = s.camelize;\ns.mapChars  = s.map;\n\n\n// Implement chaining\ns.prototype = {\n  value: function value() {\n    return this._wrapped;\n  }\n};\n\nfunction fn2method(key, fn) {\n  if (typeof fn !== 'function') return;\n  s.prototype[key] = function() {\n    var args = [this._wrapped].concat(Array.prototype.slice.call(arguments));\n    var res = fn.apply(null, args);\n    // if the result is non-string stop the chain and return the value\n    return typeof res === 'string' ? new s(res) : res;\n  };\n}\n\n// Copy functions to instance methods for chaining\nfor (var key in s) fn2method(key, s[key]);\n\nfn2method('tap', function tap(string, fn) {\n  return fn(string);\n});\n\nfunction prototype2method(methodName) {\n  fn2method(methodName, function(context) {\n    var args = Array.prototype.slice.call(arguments, 1);\n    return String.prototype[methodName].apply(context, args);\n  });\n}\n\nvar prototypeMethods = [\n  'toUpperCase',\n  'toLowerCase',\n  'split',\n  'replace',\n  'slice',\n  'substring',\n  'substr',\n  'concat'\n];\n\nfor (var method in prototypeMethods) prototype2method(prototypeMethods[method]);\n\n\nmodule.exports = s;\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/insert.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore.string/insert.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var splice = __webpack_require__(/*! ./splice */ \"./node_modules/underscore.string/splice.js\");\n\nmodule.exports = function insert(str, i, substr) {\n  return splice(str, i, 0, substr);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/insert.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/isBlank.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/isBlank.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function isBlank(str) {\n  return (/^\\s*$/).test(makeString(str));\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/isBlank.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/join.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/join.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar slice = [].slice;\n\nmodule.exports = function join() {\n  var args = slice.call(arguments),\n    separator = args.shift();\n\n  return args.join(makeString(separator));\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/join.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/levenshtein.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore.string/levenshtein.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\n/**\n * Based on the implementation here: https://github.com/hiddentao/fast-levenshtein\n */\nmodule.exports = function levenshtein(str1, str2) {\n  'use strict';\n  str1 = makeString(str1);\n  str2 = makeString(str2);\n\n  // Short cut cases  \n  if (str1 === str2) return 0;\n  if (!str1 || !str2) return Math.max(str1.length, str2.length);\n\n  // two rows\n  var prevRow = new Array(str2.length + 1);\n\n  // initialise previous row\n  for (var i = 0; i < prevRow.length; ++i) {\n    prevRow[i] = i;\n  }\n\n  // calculate current row distance from previous row\n  for (i = 0; i < str1.length; ++i) {\n    var nextCol = i + 1;\n\n    for (var j = 0; j < str2.length; ++j) {\n      var curCol = nextCol;\n\n      // substution\n      nextCol = prevRow[j] + ( (str1.charAt(i) === str2.charAt(j)) ? 0 : 1 );\n      // insertion\n      var tmp = curCol + 1;\n      if (nextCol > tmp) {\n        nextCol = tmp;\n      }\n      // deletion\n      tmp = prevRow[j + 1] + 1;\n      if (nextCol > tmp) {\n        nextCol = tmp;\n      }\n\n      // copy current col value into previous (in preparation for next iteration)\n      prevRow[j] = curCol;\n    }\n\n    // copy last col value into previous (in preparation for next iteration)\n    prevRow[j] = nextCol;\n  }\n\n  return nextCol;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/levenshtein.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/lines.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/lines.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function lines(str) {\n  if (str == null) return [];\n  return String(str).split(/\\r\\n?|\\n/);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/lines.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/lpad.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/lpad.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var pad = __webpack_require__(/*! ./pad */ \"./node_modules/underscore.string/pad.js\");\n\nmodule.exports = function lpad(str, length, padStr) {\n  return pad(str, length, padStr);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/lpad.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/lrpad.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/lrpad.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var pad = __webpack_require__(/*! ./pad */ \"./node_modules/underscore.string/pad.js\");\n\nmodule.exports = function lrpad(str, length, padStr) {\n  return pad(str, length, padStr, 'both');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/lrpad.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/ltrim.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/ltrim.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar defaultToWhiteSpace = __webpack_require__(/*! ./helper/defaultToWhiteSpace */ \"./node_modules/underscore.string/helper/defaultToWhiteSpace.js\");\nvar nativeTrimLeft = String.prototype.trimLeft;\n\nmodule.exports = function ltrim(str, characters) {\n  str = makeString(str);\n  if (!characters && nativeTrimLeft) return nativeTrimLeft.call(str);\n  characters = defaultToWhiteSpace(characters);\n  return str.replace(new RegExp('^' + characters + '+'), '');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/ltrim.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/map.js":
+/*!***********************************************!*\
+  !*** ./node_modules/underscore.string/map.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function(str, callback) {\n  str = makeString(str);\n\n  if (str.length === 0 || typeof callback !== 'function') return str;\n\n  return str.replace(/./g, callback);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/map.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/naturalCmp.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/naturalCmp.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function naturalCmp(str1, str2) {\n  if (str1 == str2) return 0;\n  if (!str1) return -1;\n  if (!str2) return 1;\n\n  var cmpRegex = /(\\.\\d+|\\d+|\\D+)/g,\n    tokens1 = String(str1).match(cmpRegex),\n    tokens2 = String(str2).match(cmpRegex),\n    count = Math.min(tokens1.length, tokens2.length);\n\n  for (var i = 0; i < count; i++) {\n    var a = tokens1[i],\n      b = tokens2[i];\n\n    if (a !== b) {\n      var num1 = +a;\n      var num2 = +b;\n      if (num1 === num1 && num2 === num2) {\n        return num1 > num2 ? 1 : -1;\n      }\n      return a < b ? -1 : 1;\n    }\n  }\n\n  if (tokens1.length != tokens2.length)\n    return tokens1.length - tokens2.length;\n\n  return str1 < str2 ? -1 : 1;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/naturalCmp.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/numberFormat.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore.string/numberFormat.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function numberFormat(number, dec, dsep, tsep) {\n  if (isNaN(number) || number == null) return '';\n\n  number = number.toFixed(~~dec);\n  tsep = typeof tsep == 'string' ? tsep : ',';\n\n  var parts = number.split('.'),\n    fnums = parts[0],\n    decimals = parts[1] ? (dsep || '.') + parts[1] : '';\n\n  return fnums.replace(/(\\d)(?=(?:\\d{3})+$)/g, '$1' + tsep) + decimals;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/numberFormat.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/pad.js":
+/*!***********************************************!*\
+  !*** ./node_modules/underscore.string/pad.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar strRepeat = __webpack_require__(/*! ./helper/strRepeat */ \"./node_modules/underscore.string/helper/strRepeat.js\");\n\nmodule.exports = function pad(str, length, padStr, type) {\n  str = makeString(str);\n  length = ~~length;\n\n  var padlen = 0;\n\n  if (!padStr)\n    padStr = ' ';\n  else if (padStr.length > 1)\n    padStr = padStr.charAt(0);\n\n  switch (type) {\n  case 'right':\n    padlen = length - str.length;\n    return str + strRepeat(padStr, padlen);\n  case 'both':\n    padlen = length - str.length;\n    return strRepeat(padStr, Math.ceil(padlen / 2)) + str + strRepeat(padStr, Math.floor(padlen / 2));\n  default: // 'left'\n    padlen = length - str.length;\n    return strRepeat(padStr, padlen) + str;\n  }\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/pad.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/pred.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/pred.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var adjacent = __webpack_require__(/*! ./helper/adjacent */ \"./node_modules/underscore.string/helper/adjacent.js\");\n\nmodule.exports = function succ(str) {\n  return adjacent(str, -1);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/pred.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/prune.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/prune.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("/**\n * _s.prune: a more elegant version of truncate\n * prune extra chars, never leaving a half-chopped word.\n * @author github.com/rwz\n */\nvar makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar rtrim = __webpack_require__(/*! ./rtrim */ \"./node_modules/underscore.string/rtrim.js\");\n\nmodule.exports = function prune(str, length, pruneStr) {\n  str = makeString(str);\n  length = ~~length;\n  pruneStr = pruneStr != null ? String(pruneStr) : '...';\n\n  if (str.length <= length) return str;\n\n  var tmpl = function(c) {\n      return c.toUpperCase() !== c.toLowerCase() ? 'A' : ' ';\n    },\n    template = str.slice(0, length + 1).replace(/.(?=\\W*\\w*$)/g, tmpl); // 'Hello, world' -> 'HellAA AAAAA'\n\n  if (template.slice(template.length - 2).match(/\\w\\w/))\n    template = template.replace(/\\s*\\S+$/, '');\n  else\n    template = rtrim(template.slice(0, template.length - 1));\n\n  return (template + pruneStr).length > str.length ? str : str.slice(0, template.length) + pruneStr;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/prune.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/quote.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/quote.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var surround = __webpack_require__(/*! ./surround */ \"./node_modules/underscore.string/surround.js\");\n\nmodule.exports = function quote(str, quoteChar) {\n  return surround(str, quoteChar || '\"');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/quote.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/repeat.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore.string/repeat.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar strRepeat = __webpack_require__(/*! ./helper/strRepeat */ \"./node_modules/underscore.string/helper/strRepeat.js\");\n\nmodule.exports = function repeat(str, qty, separator) {\n  str = makeString(str);\n\n  qty = ~~qty;\n\n  // using faster implementation if separator is not needed;\n  if (separator == null) return strRepeat(str, qty);\n\n  // this one is about 300x slower in Google Chrome\n  /*eslint no-empty: 0*/\n  for (var repeat = []; qty > 0; repeat[--qty] = str) {}\n  return repeat.join(separator);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/repeat.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/replaceAll.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/replaceAll.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function replaceAll(str, find, replace, ignorecase) {\n  var flags = (ignorecase === true)?'gi':'g';\n  var reg = new RegExp(find, flags);\n\n  return makeString(str).replace(reg, replace);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/replaceAll.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/reverse.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/reverse.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var chars = __webpack_require__(/*! ./chars */ \"./node_modules/underscore.string/chars.js\");\n\nmodule.exports = function reverse(str) {\n  return chars(str).reverse().join('');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/reverse.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/rpad.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/rpad.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var pad = __webpack_require__(/*! ./pad */ \"./node_modules/underscore.string/pad.js\");\n\nmodule.exports = function rpad(str, length, padStr) {\n  return pad(str, length, padStr, 'right');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/rpad.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/rtrim.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/rtrim.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar defaultToWhiteSpace = __webpack_require__(/*! ./helper/defaultToWhiteSpace */ \"./node_modules/underscore.string/helper/defaultToWhiteSpace.js\");\nvar nativeTrimRight = String.prototype.trimRight;\n\nmodule.exports = function rtrim(str, characters) {\n  str = makeString(str);\n  if (!characters && nativeTrimRight) return nativeTrimRight.call(str);\n  characters = defaultToWhiteSpace(characters);\n  return str.replace(new RegExp(characters + '+$'), '');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/rtrim.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/slugify.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/slugify.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\nvar dasherize = __webpack_require__(/*! ./dasherize */ \"./node_modules/underscore.string/dasherize.js\");\nvar cleanDiacritics = __webpack_require__(/*! ./cleanDiacritics */ \"./node_modules/underscore.string/cleanDiacritics.js\");\n\nmodule.exports = function slugify(str) {\n  return trim(dasherize(cleanDiacritics(str).replace(/[^\\w\\s-]/g, '-').toLowerCase()), '-');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/slugify.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/splice.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore.string/splice.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var chars = __webpack_require__(/*! ./chars */ \"./node_modules/underscore.string/chars.js\");\n\nmodule.exports = function splice(str, i, howmany, substr) {\n  var arr = chars(str);\n  arr.splice(~~i, ~~howmany, substr);\n  return arr.join('');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/splice.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/sprintf.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/sprintf.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var deprecate = __webpack_require__(/*! util-deprecate */ \"./node_modules/util-deprecate/browser.js\");\n\nmodule.exports = deprecate(__webpack_require__(/*! sprintf-js */ \"./node_modules/sprintf-js/src/sprintf.js\").sprintf,\n  'sprintf() will be removed in the next major release, use the sprintf-js package instead.');\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/sprintf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/startsWith.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/startsWith.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar toPositive = __webpack_require__(/*! ./helper/toPositive */ \"./node_modules/underscore.string/helper/toPositive.js\");\n\nmodule.exports = function startsWith(str, starts, position) {\n  str = makeString(str);\n  starts = '' + starts;\n  position = position == null ? 0 : Math.min(toPositive(position), str.length);\n  return str.lastIndexOf(starts, position) === position;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/startsWith.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/strLeft.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/strLeft.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function strLeft(str, sep) {\n  str = makeString(str);\n  sep = makeString(sep);\n  var pos = !sep ? -1 : str.indexOf(sep);\n  return~ pos ? str.slice(0, pos) : str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/strLeft.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/strLeftBack.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore.string/strLeftBack.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function strLeftBack(str, sep) {\n  str = makeString(str);\n  sep = makeString(sep);\n  var pos = str.lastIndexOf(sep);\n  return~ pos ? str.slice(0, pos) : str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/strLeftBack.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/strRight.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/strRight.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function strRight(str, sep) {\n  str = makeString(str);\n  sep = makeString(sep);\n  var pos = !sep ? -1 : str.indexOf(sep);\n  return~ pos ? str.slice(pos + sep.length, str.length) : str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/strRight.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/strRightBack.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore.string/strRightBack.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function strRightBack(str, sep) {\n  str = makeString(str);\n  sep = makeString(sep);\n  var pos = !sep ? -1 : str.lastIndexOf(sep);\n  return~ pos ? str.slice(pos + sep.length, str.length) : str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/strRightBack.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/stripTags.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore.string/stripTags.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function stripTags(str) {\n  return makeString(str).replace(/<\\/?[^>]+>/g, '');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/stripTags.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/succ.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/succ.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var adjacent = __webpack_require__(/*! ./helper/adjacent */ \"./node_modules/underscore.string/helper/adjacent.js\");\n\nmodule.exports = function succ(str) {\n  return adjacent(str, 1);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/succ.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/surround.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/surround.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function surround(str, wrapper) {\n  return [wrapper, str, wrapper].join('');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/surround.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/swapCase.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/swapCase.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function swapCase(str) {\n  return makeString(str).replace(/\\S/g, function(c) {\n    return c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase();\n  });\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/swapCase.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/titleize.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/titleize.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function titleize(str) {\n  return makeString(str).toLowerCase().replace(/(?:^|\\s|-)\\S/g, function(c) {\n    return c.toUpperCase();\n  });\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/titleize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/toBoolean.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore.string/toBoolean.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nfunction boolMatch(s, matchers) {\n  var i, matcher, down = s.toLowerCase();\n  matchers = [].concat(matchers);\n  for (i = 0; i < matchers.length; i += 1) {\n    matcher = matchers[i];\n    if (!matcher) continue;\n    if (matcher.test && matcher.test(s)) return true;\n    if (matcher.toLowerCase() === down) return true;\n  }\n}\n\nmodule.exports = function toBoolean(str, trueValues, falseValues) {\n  if (typeof str === 'number') str = '' + str;\n  if (typeof str !== 'string') return !!str;\n  str = trim(str);\n  if (boolMatch(str, trueValues || ['true', '1'])) return true;\n  if (boolMatch(str, falseValues || ['false', '0'])) return false;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/toBoolean.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/toNumber.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/toNumber.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function toNumber(num, precision) {\n  if (num == null) return 0;\n  var factor = Math.pow(10, isFinite(precision) ? precision : 0);\n  return Math.round(num * factor) / factor;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/toNumber.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/toSentence.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore.string/toSentence.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var rtrim = __webpack_require__(/*! ./rtrim */ \"./node_modules/underscore.string/rtrim.js\");\n\nmodule.exports = function toSentence(array, separator, lastSeparator, serial) {\n  separator = separator || ', ';\n  lastSeparator = lastSeparator || ' and ';\n  var a = array.slice(),\n    lastMember = a.pop();\n\n  if (array.length > 2 && serial) lastSeparator = rtrim(separator) + lastSeparator;\n\n  return a.length ? a.join(separator) + lastSeparator + lastMember : lastMember;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/toSentence.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/toSentenceSerial.js":
+/*!************************************************************!*\
+  !*** ./node_modules/underscore.string/toSentenceSerial.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var toSentence = __webpack_require__(/*! ./toSentence */ \"./node_modules/underscore.string/toSentence.js\");\n\nmodule.exports = function toSentenceSerial(array, sep, lastSep) {\n  return toSentence(array, sep, lastSep, true);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/toSentenceSerial.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/trim.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/trim.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar defaultToWhiteSpace = __webpack_require__(/*! ./helper/defaultToWhiteSpace */ \"./node_modules/underscore.string/helper/defaultToWhiteSpace.js\");\nvar nativeTrim = String.prototype.trim;\n\nmodule.exports = function trim(str, characters) {\n  str = makeString(str);\n  if (!characters && nativeTrim) return nativeTrim.call(str);\n  characters = defaultToWhiteSpace(characters);\n  return str.replace(new RegExp('^' + characters + '+|' + characters + '+$', 'g'), '');\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/trim.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/truncate.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/truncate.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function truncate(str, length, truncateStr) {\n  str = makeString(str);\n  truncateStr = truncateStr || '...';\n  length = ~~length;\n  return str.length > length ? str.slice(0, length) + truncateStr : str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/truncate.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/underscored.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore.string/underscored.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nmodule.exports = function underscored(str) {\n  return trim(str).replace(/([a-z\\d])([A-Z]+)/g, '$1_$2').replace(/[-\\s]+/g, '_').toLowerCase();\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/underscored.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/unescapeHTML.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore.string/unescapeHTML.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\nvar htmlEntities = __webpack_require__(/*! ./helper/htmlEntities */ \"./node_modules/underscore.string/helper/htmlEntities.js\");\n\nmodule.exports = function unescapeHTML(str) {\n  return makeString(str).replace(/\\&([^;]{1,10});/g, function(entity, entityCode) {\n    var match;\n\n    if (entityCode in htmlEntities) {\n      return htmlEntities[entityCode];\n    /*eslint no-cond-assign: 0*/\n    } else if (match = entityCode.match(/^#x([\\da-fA-F]+)$/)) {\n      return String.fromCharCode(parseInt(match[1], 16));\n    /*eslint no-cond-assign: 0*/\n    } else if (match = entityCode.match(/^#(\\d+)$/)) {\n      return String.fromCharCode(~~match[1]);\n    } else {\n      return entity;\n    }\n  });\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/unescapeHTML.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/unquote.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore.string/unquote.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function unquote(str, quoteChar) {\n  quoteChar = quoteChar || '\"';\n  if (str[0] === quoteChar && str[str.length - 1] === quoteChar)\n    return str.slice(1, str.length - 1);\n  else return str;\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/unquote.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/vsprintf.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore.string/vsprintf.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var deprecate = __webpack_require__(/*! util-deprecate */ \"./node_modules/util-deprecate/browser.js\");\n\nmodule.exports = deprecate(__webpack_require__(/*! sprintf-js */ \"./node_modules/sprintf-js/src/sprintf.js\").vsprintf,\n  'vsprintf() will be removed in the next major release, use the sprintf-js package instead.');\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/vsprintf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/words.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore.string/words.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var isBlank = __webpack_require__(/*! ./isBlank */ \"./node_modules/underscore.string/isBlank.js\");\nvar trim = __webpack_require__(/*! ./trim */ \"./node_modules/underscore.string/trim.js\");\n\nmodule.exports = function words(str, delimiter) {\n  if (isBlank(str)) return [];\n  return trim(str, delimiter).split(delimiter || /\\s+/);\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/words.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore.string/wrap.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore.string/wrap.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("// Wrap\n// wraps a string by a certain width\n\nvar makeString = __webpack_require__(/*! ./helper/makeString */ \"./node_modules/underscore.string/helper/makeString.js\");\n\nmodule.exports = function wrap(str, options){\n  str = makeString(str);\n  \n  options = options || {};\n  \n  var width = options.width || 75;\n  var seperator = options.seperator || '\\n';\n  var cut = options.cut || false;\n  var preserveSpaces = options.preserveSpaces || false;\n  var trailingSpaces = options.trailingSpaces || false;\n  \n  var result;\n  \n  if(width <= 0){\n    return str;\n  }\n  \n  else if(!cut){\n  \n    var words = str.split(' ');\n    var current_column = 0;\n    result = '';\n  \n    while(words.length > 0){\n      \n      // if adding a space and the next word would cause this line to be longer than width...\n      if(1 + words[0].length + current_column > width){\n        //start a new line if this line is not already empty\n        if(current_column > 0){\n          // add a space at the end of the line is preserveSpaces is true\n          if (preserveSpaces){\n            result += ' ';\n            current_column++;\n          }\n          // fill the rest of the line with spaces if trailingSpaces option is true\n          else if(trailingSpaces){\n            while(current_column < width){\n              result += ' ';\n              current_column++;\n            }            \n          }\n          //start new line\n          result += seperator;\n          current_column = 0;\n        }\n      }\n  \n      // if not at the begining of the line, add a space in front of the word\n      if(current_column > 0){\n        result += ' ';\n        current_column++;\n      }\n  \n      // tack on the next word, update current column, a pop words array\n      result += words[0];\n      current_column += words[0].length;\n      words.shift();\n  \n    }\n  \n    // fill the rest of the line with spaces if trailingSpaces option is true\n    if(trailingSpaces){\n      while(current_column < width){\n        result += ' ';\n        current_column++;\n      }            \n    }\n  \n    return result;\n  \n  }\n  \n  else {\n  \n    var index = 0;\n    result = '';\n  \n    // walk through each character and add seperators where appropriate\n    while(index < str.length){\n      if(index % width == 0 && index > 0){\n        result += seperator;\n      }\n      result += str.charAt(index);\n      index++;\n    }\n  \n    // fill the rest of the line with spaces if trailingSpaces option is true\n    if(trailingSpaces){\n      while(index % width > 0){\n        result += ' ';\n        index++;\n      }            \n    }\n    \n    return result;\n  }\n};\n\n\n//# sourceURL=webpack:///./node_modules/underscore.string/wrap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/underscore.js":
+/*!***********************************************!*\
+  !*** ./node_modules/underscore/underscore.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3\n//     http://underscorejs.org\n//     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors\n//     Underscore may be freely distributed under the MIT license.\n\n(function() {\n\n  // Baseline setup\n  // --------------\n\n  // Establish the root object, `window` in the browser, or `exports` on the server.\n  var root = this;\n\n  // Save the previous value of the `_` variable.\n  var previousUnderscore = root._;\n\n  // Save bytes in the minified (but not gzipped) version:\n  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;\n\n  // Create quick reference variables for speed access to core prototypes.\n  var\n    push             = ArrayProto.push,\n    slice            = ArrayProto.slice,\n    toString         = ObjProto.toString,\n    hasOwnProperty   = ObjProto.hasOwnProperty;\n\n  // All **ECMAScript 5** native function implementations that we hope to use\n  // are declared here.\n  var\n    nativeIsArray      = Array.isArray,\n    nativeKeys         = Object.keys,\n    nativeBind         = FuncProto.bind,\n    nativeCreate       = Object.create;\n\n  // Naked function reference for surrogate-prototype-swapping.\n  var Ctor = function(){};\n\n  // Create a safe reference to the Underscore object for use below.\n  var _ = function(obj) {\n    if (obj instanceof _) return obj;\n    if (!(this instanceof _)) return new _(obj);\n    this._wrapped = obj;\n  };\n\n  // Export the Underscore object for **Node.js**, with\n  // backwards-compatibility for the old `require()` API. If we're in\n  // the browser, add `_` as a global object.\n  if (true) {\n    if ( true && module.exports) {\n      exports = module.exports = _;\n    }\n    exports._ = _;\n  } else {}\n\n  // Current version.\n  _.VERSION = '1.8.3';\n\n  // Internal function that returns an efficient (for current engines) version\n  // of the passed-in callback, to be repeatedly applied in other Underscore\n  // functions.\n  var optimizeCb = function(func, context, argCount) {\n    if (context === void 0) return func;\n    switch (argCount == null ? 3 : argCount) {\n      case 1: return function(value) {\n        return func.call(context, value);\n      };\n      case 2: return function(value, other) {\n        return func.call(context, value, other);\n      };\n      case 3: return function(value, index, collection) {\n        return func.call(context, value, index, collection);\n      };\n      case 4: return function(accumulator, value, index, collection) {\n        return func.call(context, accumulator, value, index, collection);\n      };\n    }\n    return function() {\n      return func.apply(context, arguments);\n    };\n  };\n\n  // A mostly-internal function to generate callbacks that can be applied\n  // to each element in a collection, returning the desired result — either\n  // identity, an arbitrary callback, a property matcher, or a property accessor.\n  var cb = function(value, context, argCount) {\n    if (value == null) return _.identity;\n    if (_.isFunction(value)) return optimizeCb(value, context, argCount);\n    if (_.isObject(value)) return _.matcher(value);\n    return _.property(value);\n  };\n  _.iteratee = function(value, context) {\n    return cb(value, context, Infinity);\n  };\n\n  // An internal function for creating assigner functions.\n  var createAssigner = function(keysFunc, undefinedOnly) {\n    return function(obj) {\n      var length = arguments.length;\n      if (length < 2 || obj == null) return obj;\n      for (var index = 1; index < length; index++) {\n        var source = arguments[index],\n            keys = keysFunc(source),\n            l = keys.length;\n        for (var i = 0; i < l; i++) {\n          var key = keys[i];\n          if (!undefinedOnly || obj[key] === void 0) obj[key] = source[key];\n        }\n      }\n      return obj;\n    };\n  };\n\n  // An internal function for creating a new object that inherits from another.\n  var baseCreate = function(prototype) {\n    if (!_.isObject(prototype)) return {};\n    if (nativeCreate) return nativeCreate(prototype);\n    Ctor.prototype = prototype;\n    var result = new Ctor;\n    Ctor.prototype = null;\n    return result;\n  };\n\n  var property = function(key) {\n    return function(obj) {\n      return obj == null ? void 0 : obj[key];\n    };\n  };\n\n  // Helper for collection methods to determine whether a collection\n  // should be iterated as an array or as an object\n  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength\n  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094\n  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;\n  var getLength = property('length');\n  var isArrayLike = function(collection) {\n    var length = getLength(collection);\n    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;\n  };\n\n  // Collection Functions\n  // --------------------\n\n  // The cornerstone, an `each` implementation, aka `forEach`.\n  // Handles raw objects in addition to array-likes. Treats all\n  // sparse array-likes as if they were dense.\n  _.each = _.forEach = function(obj, iteratee, context) {\n    iteratee = optimizeCb(iteratee, context);\n    var i, length;\n    if (isArrayLike(obj)) {\n      for (i = 0, length = obj.length; i < length; i++) {\n        iteratee(obj[i], i, obj);\n      }\n    } else {\n      var keys = _.keys(obj);\n      for (i = 0, length = keys.length; i < length; i++) {\n        iteratee(obj[keys[i]], keys[i], obj);\n      }\n    }\n    return obj;\n  };\n\n  // Return the results of applying the iteratee to each element.\n  _.map = _.collect = function(obj, iteratee, context) {\n    iteratee = cb(iteratee, context);\n    var keys = !isArrayLike(obj) && _.keys(obj),\n        length = (keys || obj).length,\n        results = Array(length);\n    for (var index = 0; index < length; index++) {\n      var currentKey = keys ? keys[index] : index;\n      results[index] = iteratee(obj[currentKey], currentKey, obj);\n    }\n    return results;\n  };\n\n  // Create a reducing function iterating left or right.\n  function createReduce(dir) {\n    // Optimized iterator function as using arguments.length\n    // in the main function will deoptimize the, see #1991.\n    function iterator(obj, iteratee, memo, keys, index, length) {\n      for (; index >= 0 && index < length; index += dir) {\n        var currentKey = keys ? keys[index] : index;\n        memo = iteratee(memo, obj[currentKey], currentKey, obj);\n      }\n      return memo;\n    }\n\n    return function(obj, iteratee, memo, context) {\n      iteratee = optimizeCb(iteratee, context, 4);\n      var keys = !isArrayLike(obj) && _.keys(obj),\n          length = (keys || obj).length,\n          index = dir > 0 ? 0 : length - 1;\n      // Determine the initial value if none is provided.\n      if (arguments.length < 3) {\n        memo = obj[keys ? keys[index] : index];\n        index += dir;\n      }\n      return iterator(obj, iteratee, memo, keys, index, length);\n    };\n  }\n\n  // **Reduce** builds up a single result from a list of values, aka `inject`,\n  // or `foldl`.\n  _.reduce = _.foldl = _.inject = createReduce(1);\n\n  // The right-associative version of reduce, also known as `foldr`.\n  _.reduceRight = _.foldr = createReduce(-1);\n\n  // Return the first value which passes a truth test. Aliased as `detect`.\n  _.find = _.detect = function(obj, predicate, context) {\n    var key;\n    if (isArrayLike(obj)) {\n      key = _.findIndex(obj, predicate, context);\n    } else {\n      key = _.findKey(obj, predicate, context);\n    }\n    if (key !== void 0 && key !== -1) return obj[key];\n  };\n\n  // Return all the elements that pass a truth test.\n  // Aliased as `select`.\n  _.filter = _.select = function(obj, predicate, context) {\n    var results = [];\n    predicate = cb(predicate, context);\n    _.each(obj, function(value, index, list) {\n      if (predicate(value, index, list)) results.push(value);\n    });\n    return results;\n  };\n\n  // Return all the elements for which a truth test fails.\n  _.reject = function(obj, predicate, context) {\n    return _.filter(obj, _.negate(cb(predicate)), context);\n  };\n\n  // Determine whether all of the elements match a truth test.\n  // Aliased as `all`.\n  _.every = _.all = function(obj, predicate, context) {\n    predicate = cb(predicate, context);\n    var keys = !isArrayLike(obj) && _.keys(obj),\n        length = (keys || obj).length;\n    for (var index = 0; index < length; index++) {\n      var currentKey = keys ? keys[index] : index;\n      if (!predicate(obj[currentKey], currentKey, obj)) return false;\n    }\n    return true;\n  };\n\n  // Determine if at least one element in the object matches a truth test.\n  // Aliased as `any`.\n  _.some = _.any = function(obj, predicate, context) {\n    predicate = cb(predicate, context);\n    var keys = !isArrayLike(obj) && _.keys(obj),\n        length = (keys || obj).length;\n    for (var index = 0; index < length; index++) {\n      var currentKey = keys ? keys[index] : index;\n      if (predicate(obj[currentKey], currentKey, obj)) return true;\n    }\n    return false;\n  };\n\n  // Determine if the array or object contains a given item (using `===`).\n  // Aliased as `includes` and `include`.\n  _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {\n    if (!isArrayLike(obj)) obj = _.values(obj);\n    if (typeof fromIndex != 'number' || guard) fromIndex = 0;\n    return _.indexOf(obj, item, fromIndex) >= 0;\n  };\n\n  // Invoke a method (with arguments) on every item in a collection.\n  _.invoke = function(obj, method) {\n    var args = slice.call(arguments, 2);\n    var isFunc = _.isFunction(method);\n    return _.map(obj, function(value) {\n      var func = isFunc ? method : value[method];\n      return func == null ? func : func.apply(value, args);\n    });\n  };\n\n  // Convenience version of a common use case of `map`: fetching a property.\n  _.pluck = function(obj, key) {\n    return _.map(obj, _.property(key));\n  };\n\n  // Convenience version of a common use case of `filter`: selecting only objects\n  // containing specific `key:value` pairs.\n  _.where = function(obj, attrs) {\n    return _.filter(obj, _.matcher(attrs));\n  };\n\n  // Convenience version of a common use case of `find`: getting the first object\n  // containing specific `key:value` pairs.\n  _.findWhere = function(obj, attrs) {\n    return _.find(obj, _.matcher(attrs));\n  };\n\n  // Return the maximum element (or element-based computation).\n  _.max = function(obj, iteratee, context) {\n    var result = -Infinity, lastComputed = -Infinity,\n        value, computed;\n    if (iteratee == null && obj != null) {\n      obj = isArrayLike(obj) ? obj : _.values(obj);\n      for (var i = 0, length = obj.length; i < length; i++) {\n        value = obj[i];\n        if (value > result) {\n          result = value;\n        }\n      }\n    } else {\n      iteratee = cb(iteratee, context);\n      _.each(obj, function(value, index, list) {\n        computed = iteratee(value, index, list);\n        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {\n          result = value;\n          lastComputed = computed;\n        }\n      });\n    }\n    return result;\n  };\n\n  // Return the minimum element (or element-based computation).\n  _.min = function(obj, iteratee, context) {\n    var result = Infinity, lastComputed = Infinity,\n        value, computed;\n    if (iteratee == null && obj != null) {\n      obj = isArrayLike(obj) ? obj : _.values(obj);\n      for (var i = 0, length = obj.length; i < length; i++) {\n        value = obj[i];\n        if (value < result) {\n          result = value;\n        }\n      }\n    } else {\n      iteratee = cb(iteratee, context);\n      _.each(obj, function(value, index, list) {\n        computed = iteratee(value, index, list);\n        if (computed < lastComputed || computed === Infinity && result === Infinity) {\n          result = value;\n          lastComputed = computed;\n        }\n      });\n    }\n    return result;\n  };\n\n  // Shuffle a collection, using the modern version of the\n  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).\n  _.shuffle = function(obj) {\n    var set = isArrayLike(obj) ? obj : _.values(obj);\n    var length = set.length;\n    var shuffled = Array(length);\n    for (var index = 0, rand; index < length; index++) {\n      rand = _.random(0, index);\n      if (rand !== index) shuffled[index] = shuffled[rand];\n      shuffled[rand] = set[index];\n    }\n    return shuffled;\n  };\n\n  // Sample **n** random values from a collection.\n  // If **n** is not specified, returns a single random element.\n  // The internal `guard` argument allows it to work with `map`.\n  _.sample = function(obj, n, guard) {\n    if (n == null || guard) {\n      if (!isArrayLike(obj)) obj = _.values(obj);\n      return obj[_.random(obj.length - 1)];\n    }\n    return _.shuffle(obj).slice(0, Math.max(0, n));\n  };\n\n  // Sort the object's values by a criterion produced by an iteratee.\n  _.sortBy = function(obj, iteratee, context) {\n    iteratee = cb(iteratee, context);\n    return _.pluck(_.map(obj, function(value, index, list) {\n      return {\n        value: value,\n        index: index,\n        criteria: iteratee(value, index, list)\n      };\n    }).sort(function(left, right) {\n      var a = left.criteria;\n      var b = right.criteria;\n      if (a !== b) {\n        if (a > b || a === void 0) return 1;\n        if (a < b || b === void 0) return -1;\n      }\n      return left.index - right.index;\n    }), 'value');\n  };\n\n  // An internal function used for aggregate \"group by\" operations.\n  var group = function(behavior) {\n    return function(obj, iteratee, context) {\n      var result = {};\n      iteratee = cb(iteratee, context);\n      _.each(obj, function(value, index) {\n        var key = iteratee(value, index, obj);\n        behavior(result, value, key);\n      });\n      return result;\n    };\n  };\n\n  // Groups the object's values by a criterion. Pass either a string attribute\n  // to group by, or a function that returns the criterion.\n  _.groupBy = group(function(result, value, key) {\n    if (_.has(result, key)) result[key].push(value); else result[key] = [value];\n  });\n\n  // Indexes the object's values by a criterion, similar to `groupBy`, but for\n  // when you know that your index values will be unique.\n  _.indexBy = group(function(result, value, key) {\n    result[key] = value;\n  });\n\n  // Counts instances of an object that group by a certain criterion. Pass\n  // either a string attribute to count by, or a function that returns the\n  // criterion.\n  _.countBy = group(function(result, value, key) {\n    if (_.has(result, key)) result[key]++; else result[key] = 1;\n  });\n\n  // Safely create a real, live array from anything iterable.\n  _.toArray = function(obj) {\n    if (!obj) return [];\n    if (_.isArray(obj)) return slice.call(obj);\n    if (isArrayLike(obj)) return _.map(obj, _.identity);\n    return _.values(obj);\n  };\n\n  // Return the number of elements in an object.\n  _.size = function(obj) {\n    if (obj == null) return 0;\n    return isArrayLike(obj) ? obj.length : _.keys(obj).length;\n  };\n\n  // Split a collection into two arrays: one whose elements all satisfy the given\n  // predicate, and one whose elements all do not satisfy the predicate.\n  _.partition = function(obj, predicate, context) {\n    predicate = cb(predicate, context);\n    var pass = [], fail = [];\n    _.each(obj, function(value, key, obj) {\n      (predicate(value, key, obj) ? pass : fail).push(value);\n    });\n    return [pass, fail];\n  };\n\n  // Array Functions\n  // ---------------\n\n  // Get the first element of an array. Passing **n** will return the first N\n  // values in the array. Aliased as `head` and `take`. The **guard** check\n  // allows it to work with `_.map`.\n  _.first = _.head = _.take = function(array, n, guard) {\n    if (array == null) return void 0;\n    if (n == null || guard) return array[0];\n    return _.initial(array, array.length - n);\n  };\n\n  // Returns everything but the last entry of the array. Especially useful on\n  // the arguments object. Passing **n** will return all the values in\n  // the array, excluding the last N.\n  _.initial = function(array, n, guard) {\n    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));\n  };\n\n  // Get the last element of an array. Passing **n** will return the last N\n  // values in the array.\n  _.last = function(array, n, guard) {\n    if (array == null) return void 0;\n    if (n == null || guard) return array[array.length - 1];\n    return _.rest(array, Math.max(0, array.length - n));\n  };\n\n  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.\n  // Especially useful on the arguments object. Passing an **n** will return\n  // the rest N values in the array.\n  _.rest = _.tail = _.drop = function(array, n, guard) {\n    return slice.call(array, n == null || guard ? 1 : n);\n  };\n\n  // Trim out all falsy values from an array.\n  _.compact = function(array) {\n    return _.filter(array, _.identity);\n  };\n\n  // Internal implementation of a recursive `flatten` function.\n  var flatten = function(input, shallow, strict, startIndex) {\n    var output = [], idx = 0;\n    for (var i = startIndex || 0, length = getLength(input); i < length; i++) {\n      var value = input[i];\n      if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {\n        //flatten current level of array or arguments object\n        if (!shallow) value = flatten(value, shallow, strict);\n        var j = 0, len = value.length;\n        output.length += len;\n        while (j < len) {\n          output[idx++] = value[j++];\n        }\n      } else if (!strict) {\n        output[idx++] = value;\n      }\n    }\n    return output;\n  };\n\n  // Flatten out an array, either recursively (by default), or just one level.\n  _.flatten = function(array, shallow) {\n    return flatten(array, shallow, false);\n  };\n\n  // Return a version of the array that does not contain the specified value(s).\n  _.without = function(array) {\n    return _.difference(array, slice.call(arguments, 1));\n  };\n\n  // Produce a duplicate-free version of the array. If the array has already\n  // been sorted, you have the option of using a faster algorithm.\n  // Aliased as `unique`.\n  _.uniq = _.unique = function(array, isSorted, iteratee, context) {\n    if (!_.isBoolean(isSorted)) {\n      context = iteratee;\n      iteratee = isSorted;\n      isSorted = false;\n    }\n    if (iteratee != null) iteratee = cb(iteratee, context);\n    var result = [];\n    var seen = [];\n    for (var i = 0, length = getLength(array); i < length; i++) {\n      var value = array[i],\n          computed = iteratee ? iteratee(value, i, array) : value;\n      if (isSorted) {\n        if (!i || seen !== computed) result.push(value);\n        seen = computed;\n      } else if (iteratee) {\n        if (!_.contains(seen, computed)) {\n          seen.push(computed);\n          result.push(value);\n        }\n      } else if (!_.contains(result, value)) {\n        result.push(value);\n      }\n    }\n    return result;\n  };\n\n  // Produce an array that contains the union: each distinct element from all of\n  // the passed-in arrays.\n  _.union = function() {\n    return _.uniq(flatten(arguments, true, true));\n  };\n\n  // Produce an array that contains every item shared between all the\n  // passed-in arrays.\n  _.intersection = function(array) {\n    var result = [];\n    var argsLength = arguments.length;\n    for (var i = 0, length = getLength(array); i < length; i++) {\n      var item = array[i];\n      if (_.contains(result, item)) continue;\n      for (var j = 1; j < argsLength; j++) {\n        if (!_.contains(arguments[j], item)) break;\n      }\n      if (j === argsLength) result.push(item);\n    }\n    return result;\n  };\n\n  // Take the difference between one array and a number of other arrays.\n  // Only the elements present in just the first array will remain.\n  _.difference = function(array) {\n    var rest = flatten(arguments, true, true, 1);\n    return _.filter(array, function(value){\n      return !_.contains(rest, value);\n    });\n  };\n\n  // Zip together multiple lists into a single array -- elements that share\n  // an index go together.\n  _.zip = function() {\n    return _.unzip(arguments);\n  };\n\n  // Complement of _.zip. Unzip accepts an array of arrays and groups\n  // each array's elements on shared indices\n  _.unzip = function(array) {\n    var length = array && _.max(array, getLength).length || 0;\n    var result = Array(length);\n\n    for (var index = 0; index < length; index++) {\n      result[index] = _.pluck(array, index);\n    }\n    return result;\n  };\n\n  // Converts lists into objects. Pass either a single array of `[key, value]`\n  // pairs, or two parallel arrays of the same length -- one of keys, and one of\n  // the corresponding values.\n  _.object = function(list, values) {\n    var result = {};\n    for (var i = 0, length = getLength(list); i < length; i++) {\n      if (values) {\n        result[list[i]] = values[i];\n      } else {\n        result[list[i][0]] = list[i][1];\n      }\n    }\n    return result;\n  };\n\n  // Generator function to create the findIndex and findLastIndex functions\n  function createPredicateIndexFinder(dir) {\n    return function(array, predicate, context) {\n      predicate = cb(predicate, context);\n      var length = getLength(array);\n      var index = dir > 0 ? 0 : length - 1;\n      for (; index >= 0 && index < length; index += dir) {\n        if (predicate(array[index], index, array)) return index;\n      }\n      return -1;\n    };\n  }\n\n  // Returns the first index on an array-like that passes a predicate test\n  _.findIndex = createPredicateIndexFinder(1);\n  _.findLastIndex = createPredicateIndexFinder(-1);\n\n  // Use a comparator function to figure out the smallest index at which\n  // an object should be inserted so as to maintain order. Uses binary search.\n  _.sortedIndex = function(array, obj, iteratee, context) {\n    iteratee = cb(iteratee, context, 1);\n    var value = iteratee(obj);\n    var low = 0, high = getLength(array);\n    while (low < high) {\n      var mid = Math.floor((low + high) / 2);\n      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;\n    }\n    return low;\n  };\n\n  // Generator function to create the indexOf and lastIndexOf functions\n  function createIndexFinder(dir, predicateFind, sortedIndex) {\n    return function(array, item, idx) {\n      var i = 0, length = getLength(array);\n      if (typeof idx == 'number') {\n        if (dir > 0) {\n            i = idx >= 0 ? idx : Math.max(idx + length, i);\n        } else {\n            length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;\n        }\n      } else if (sortedIndex && idx && length) {\n        idx = sortedIndex(array, item);\n        return array[idx] === item ? idx : -1;\n      }\n      if (item !== item) {\n        idx = predicateFind(slice.call(array, i, length), _.isNaN);\n        return idx >= 0 ? idx + i : -1;\n      }\n      for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {\n        if (array[idx] === item) return idx;\n      }\n      return -1;\n    };\n  }\n\n  // Return the position of the first occurrence of an item in an array,\n  // or -1 if the item is not included in the array.\n  // If the array is large and already in sort order, pass `true`\n  // for **isSorted** to use binary search.\n  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);\n  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);\n\n  // Generate an integer Array containing an arithmetic progression. A port of\n  // the native Python `range()` function. See\n  // [the Python documentation](http://docs.python.org/library/functions.html#range).\n  _.range = function(start, stop, step) {\n    if (stop == null) {\n      stop = start || 0;\n      start = 0;\n    }\n    step = step || 1;\n\n    var length = Math.max(Math.ceil((stop - start) / step), 0);\n    var range = Array(length);\n\n    for (var idx = 0; idx < length; idx++, start += step) {\n      range[idx] = start;\n    }\n\n    return range;\n  };\n\n  // Function (ahem) Functions\n  // ------------------\n\n  // Determines whether to execute a function as a constructor\n  // or a normal function with the provided arguments\n  var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {\n    if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);\n    var self = baseCreate(sourceFunc.prototype);\n    var result = sourceFunc.apply(self, args);\n    if (_.isObject(result)) return result;\n    return self;\n  };\n\n  // Create a function bound to a given object (assigning `this`, and arguments,\n  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if\n  // available.\n  _.bind = function(func, context) {\n    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));\n    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');\n    var args = slice.call(arguments, 2);\n    var bound = function() {\n      return executeBound(func, bound, context, this, args.concat(slice.call(arguments)));\n    };\n    return bound;\n  };\n\n  // Partially apply a function by creating a version that has had some of its\n  // arguments pre-filled, without changing its dynamic `this` context. _ acts\n  // as a placeholder, allowing any combination of arguments to be pre-filled.\n  _.partial = function(func) {\n    var boundArgs = slice.call(arguments, 1);\n    var bound = function() {\n      var position = 0, length = boundArgs.length;\n      var args = Array(length);\n      for (var i = 0; i < length; i++) {\n        args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];\n      }\n      while (position < arguments.length) args.push(arguments[position++]);\n      return executeBound(func, bound, this, this, args);\n    };\n    return bound;\n  };\n\n  // Bind a number of an object's methods to that object. Remaining arguments\n  // are the method names to be bound. Useful for ensuring that all callbacks\n  // defined on an object belong to it.\n  _.bindAll = function(obj) {\n    var i, length = arguments.length, key;\n    if (length <= 1) throw new Error('bindAll must be passed function names');\n    for (i = 1; i < length; i++) {\n      key = arguments[i];\n      obj[key] = _.bind(obj[key], obj);\n    }\n    return obj;\n  };\n\n  // Memoize an expensive function by storing its results.\n  _.memoize = function(func, hasher) {\n    var memoize = function(key) {\n      var cache = memoize.cache;\n      var address = '' + (hasher ? hasher.apply(this, arguments) : key);\n      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);\n      return cache[address];\n    };\n    memoize.cache = {};\n    return memoize;\n  };\n\n  // Delays a function for the given number of milliseconds, and then calls\n  // it with the arguments supplied.\n  _.delay = function(func, wait) {\n    var args = slice.call(arguments, 2);\n    return setTimeout(function(){\n      return func.apply(null, args);\n    }, wait);\n  };\n\n  // Defers a function, scheduling it to run after the current call stack has\n  // cleared.\n  _.defer = _.partial(_.delay, _, 1);\n\n  // Returns a function, that, when invoked, will only be triggered at most once\n  // during a given window of time. Normally, the throttled function will run\n  // as much as it can, without ever going more than once per `wait` duration;\n  // but if you'd like to disable the execution on the leading edge, pass\n  // `{leading: false}`. To disable execution on the trailing edge, ditto.\n  _.throttle = function(func, wait, options) {\n    var context, args, result;\n    var timeout = null;\n    var previous = 0;\n    if (!options) options = {};\n    var later = function() {\n      previous = options.leading === false ? 0 : _.now();\n      timeout = null;\n      result = func.apply(context, args);\n      if (!timeout) context = args = null;\n    };\n    return function() {\n      var now = _.now();\n      if (!previous && options.leading === false) previous = now;\n      var remaining = wait - (now - previous);\n      context = this;\n      args = arguments;\n      if (remaining <= 0 || remaining > wait) {\n        if (timeout) {\n          clearTimeout(timeout);\n          timeout = null;\n        }\n        previous = now;\n        result = func.apply(context, args);\n        if (!timeout) context = args = null;\n      } else if (!timeout && options.trailing !== false) {\n        timeout = setTimeout(later, remaining);\n      }\n      return result;\n    };\n  };\n\n  // Returns a function, that, as long as it continues to be invoked, will not\n  // be triggered. The function will be called after it stops being called for\n  // N milliseconds. If `immediate` is passed, trigger the function on the\n  // leading edge, instead of the trailing.\n  _.debounce = function(func, wait, immediate) {\n    var timeout, args, context, timestamp, result;\n\n    var later = function() {\n      var last = _.now() - timestamp;\n\n      if (last < wait && last >= 0) {\n        timeout = setTimeout(later, wait - last);\n      } else {\n        timeout = null;\n        if (!immediate) {\n          result = func.apply(context, args);\n          if (!timeout) context = args = null;\n        }\n      }\n    };\n\n    return function() {\n      context = this;\n      args = arguments;\n      timestamp = _.now();\n      var callNow = immediate && !timeout;\n      if (!timeout) timeout = setTimeout(later, wait);\n      if (callNow) {\n        result = func.apply(context, args);\n        context = args = null;\n      }\n\n      return result;\n    };\n  };\n\n  // Returns the first function passed as an argument to the second,\n  // allowing you to adjust arguments, run code before and after, and\n  // conditionally execute the original function.\n  _.wrap = function(func, wrapper) {\n    return _.partial(wrapper, func);\n  };\n\n  // Returns a negated version of the passed-in predicate.\n  _.negate = function(predicate) {\n    return function() {\n      return !predicate.apply(this, arguments);\n    };\n  };\n\n  // Returns a function that is the composition of a list of functions, each\n  // consuming the return value of the function that follows.\n  _.compose = function() {\n    var args = arguments;\n    var start = args.length - 1;\n    return function() {\n      var i = start;\n      var result = args[start].apply(this, arguments);\n      while (i--) result = args[i].call(this, result);\n      return result;\n    };\n  };\n\n  // Returns a function that will only be executed on and after the Nth call.\n  _.after = function(times, func) {\n    return function() {\n      if (--times < 1) {\n        return func.apply(this, arguments);\n      }\n    };\n  };\n\n  // Returns a function that will only be executed up to (but not including) the Nth call.\n  _.before = function(times, func) {\n    var memo;\n    return function() {\n      if (--times > 0) {\n        memo = func.apply(this, arguments);\n      }\n      if (times <= 1) func = null;\n      return memo;\n    };\n  };\n\n  // Returns a function that will be executed at most one time, no matter how\n  // often you call it. Useful for lazy initialization.\n  _.once = _.partial(_.before, 2);\n\n  // Object Functions\n  // ----------------\n\n  // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.\n  var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');\n  var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',\n                      'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];\n\n  function collectNonEnumProps(obj, keys) {\n    var nonEnumIdx = nonEnumerableProps.length;\n    var constructor = obj.constructor;\n    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;\n\n    // Constructor is a special case.\n    var prop = 'constructor';\n    if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);\n\n    while (nonEnumIdx--) {\n      prop = nonEnumerableProps[nonEnumIdx];\n      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {\n        keys.push(prop);\n      }\n    }\n  }\n\n  // Retrieve the names of an object's own properties.\n  // Delegates to **ECMAScript 5**'s native `Object.keys`\n  _.keys = function(obj) {\n    if (!_.isObject(obj)) return [];\n    if (nativeKeys) return nativeKeys(obj);\n    var keys = [];\n    for (var key in obj) if (_.has(obj, key)) keys.push(key);\n    // Ahem, IE < 9.\n    if (hasEnumBug) collectNonEnumProps(obj, keys);\n    return keys;\n  };\n\n  // Retrieve all the property names of an object.\n  _.allKeys = function(obj) {\n    if (!_.isObject(obj)) return [];\n    var keys = [];\n    for (var key in obj) keys.push(key);\n    // Ahem, IE < 9.\n    if (hasEnumBug) collectNonEnumProps(obj, keys);\n    return keys;\n  };\n\n  // Retrieve the values of an object's properties.\n  _.values = function(obj) {\n    var keys = _.keys(obj);\n    var length = keys.length;\n    var values = Array(length);\n    for (var i = 0; i < length; i++) {\n      values[i] = obj[keys[i]];\n    }\n    return values;\n  };\n\n  // Returns the results of applying the iteratee to each element of the object\n  // In contrast to _.map it returns an object\n  _.mapObject = function(obj, iteratee, context) {\n    iteratee = cb(iteratee, context);\n    var keys =  _.keys(obj),\n          length = keys.length,\n          results = {},\n          currentKey;\n      for (var index = 0; index < length; index++) {\n        currentKey = keys[index];\n        results[currentKey] = iteratee(obj[currentKey], currentKey, obj);\n      }\n      return results;\n  };\n\n  // Convert an object into a list of `[key, value]` pairs.\n  _.pairs = function(obj) {\n    var keys = _.keys(obj);\n    var length = keys.length;\n    var pairs = Array(length);\n    for (var i = 0; i < length; i++) {\n      pairs[i] = [keys[i], obj[keys[i]]];\n    }\n    return pairs;\n  };\n\n  // Invert the keys and values of an object. The values must be serializable.\n  _.invert = function(obj) {\n    var result = {};\n    var keys = _.keys(obj);\n    for (var i = 0, length = keys.length; i < length; i++) {\n      result[obj[keys[i]]] = keys[i];\n    }\n    return result;\n  };\n\n  // Return a sorted list of the function names available on the object.\n  // Aliased as `methods`\n  _.functions = _.methods = function(obj) {\n    var names = [];\n    for (var key in obj) {\n      if (_.isFunction(obj[key])) names.push(key);\n    }\n    return names.sort();\n  };\n\n  // Extend a given object with all the properties in passed-in object(s).\n  _.extend = createAssigner(_.allKeys);\n\n  // Assigns a given object with all the own properties in the passed-in object(s)\n  // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)\n  _.extendOwn = _.assign = createAssigner(_.keys);\n\n  // Returns the first key on an object that passes a predicate test\n  _.findKey = function(obj, predicate, context) {\n    predicate = cb(predicate, context);\n    var keys = _.keys(obj), key;\n    for (var i = 0, length = keys.length; i < length; i++) {\n      key = keys[i];\n      if (predicate(obj[key], key, obj)) return key;\n    }\n  };\n\n  // Return a copy of the object only containing the whitelisted properties.\n  _.pick = function(object, oiteratee, context) {\n    var result = {}, obj = object, iteratee, keys;\n    if (obj == null) return result;\n    if (_.isFunction(oiteratee)) {\n      keys = _.allKeys(obj);\n      iteratee = optimizeCb(oiteratee, context);\n    } else {\n      keys = flatten(arguments, false, false, 1);\n      iteratee = function(value, key, obj) { return key in obj; };\n      obj = Object(obj);\n    }\n    for (var i = 0, length = keys.length; i < length; i++) {\n      var key = keys[i];\n      var value = obj[key];\n      if (iteratee(value, key, obj)) result[key] = value;\n    }\n    return result;\n  };\n\n   // Return a copy of the object without the blacklisted properties.\n  _.omit = function(obj, iteratee, context) {\n    if (_.isFunction(iteratee)) {\n      iteratee = _.negate(iteratee);\n    } else {\n      var keys = _.map(flatten(arguments, false, false, 1), String);\n      iteratee = function(value, key) {\n        return !_.contains(keys, key);\n      };\n    }\n    return _.pick(obj, iteratee, context);\n  };\n\n  // Fill in a given object with default properties.\n  _.defaults = createAssigner(_.allKeys, true);\n\n  // Creates an object that inherits from the given prototype object.\n  // If additional properties are provided then they will be added to the\n  // created object.\n  _.create = function(prototype, props) {\n    var result = baseCreate(prototype);\n    if (props) _.extendOwn(result, props);\n    return result;\n  };\n\n  // Create a (shallow-cloned) duplicate of an object.\n  _.clone = function(obj) {\n    if (!_.isObject(obj)) return obj;\n    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);\n  };\n\n  // Invokes interceptor with the obj, and then returns obj.\n  // The primary purpose of this method is to \"tap into\" a method chain, in\n  // order to perform operations on intermediate results within the chain.\n  _.tap = function(obj, interceptor) {\n    interceptor(obj);\n    return obj;\n  };\n\n  // Returns whether an object has a given set of `key:value` pairs.\n  _.isMatch = function(object, attrs) {\n    var keys = _.keys(attrs), length = keys.length;\n    if (object == null) return !length;\n    var obj = Object(object);\n    for (var i = 0; i < length; i++) {\n      var key = keys[i];\n      if (attrs[key] !== obj[key] || !(key in obj)) return false;\n    }\n    return true;\n  };\n\n\n  // Internal recursive comparison function for `isEqual`.\n  var eq = function(a, b, aStack, bStack) {\n    // Identical objects are equal. `0 === -0`, but they aren't identical.\n    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).\n    if (a === b) return a !== 0 || 1 / a === 1 / b;\n    // A strict comparison is necessary because `null == undefined`.\n    if (a == null || b == null) return a === b;\n    // Unwrap any wrapped objects.\n    if (a instanceof _) a = a._wrapped;\n    if (b instanceof _) b = b._wrapped;\n    // Compare `[[Class]]` names.\n    var className = toString.call(a);\n    if (className !== toString.call(b)) return false;\n    switch (className) {\n      // Strings, numbers, regular expressions, dates, and booleans are compared by value.\n      case '[object RegExp]':\n      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')\n      case '[object String]':\n        // Primitives and their corresponding object wrappers are equivalent; thus, `\"5\"` is\n        // equivalent to `new String(\"5\")`.\n        return '' + a === '' + b;\n      case '[object Number]':\n        // `NaN`s are equivalent, but non-reflexive.\n        // Object(NaN) is equivalent to NaN\n        if (+a !== +a) return +b !== +b;\n        // An `egal` comparison is performed for other numeric values.\n        return +a === 0 ? 1 / +a === 1 / b : +a === +b;\n      case '[object Date]':\n      case '[object Boolean]':\n        // Coerce dates and booleans to numeric primitive values. Dates are compared by their\n        // millisecond representations. Note that invalid dates with millisecond representations\n        // of `NaN` are not equivalent.\n        return +a === +b;\n    }\n\n    var areArrays = className === '[object Array]';\n    if (!areArrays) {\n      if (typeof a != 'object' || typeof b != 'object') return false;\n\n      // Objects with different constructors are not equivalent, but `Object`s or `Array`s\n      // from different frames are.\n      var aCtor = a.constructor, bCtor = b.constructor;\n      if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&\n                               _.isFunction(bCtor) && bCtor instanceof bCtor)\n                          && ('constructor' in a && 'constructor' in b)) {\n        return false;\n      }\n    }\n    // Assume equality for cyclic structures. The algorithm for detecting cyclic\n    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.\n\n    // Initializing stack of traversed objects.\n    // It's done here since we only need them for objects and arrays comparison.\n    aStack = aStack || [];\n    bStack = bStack || [];\n    var length = aStack.length;\n    while (length--) {\n      // Linear search. Performance is inversely proportional to the number of\n      // unique nested structures.\n      if (aStack[length] === a) return bStack[length] === b;\n    }\n\n    // Add the first object to the stack of traversed objects.\n    aStack.push(a);\n    bStack.push(b);\n\n    // Recursively compare objects and arrays.\n    if (areArrays) {\n      // Compare array lengths to determine if a deep comparison is necessary.\n      length = a.length;\n      if (length !== b.length) return false;\n      // Deep compare the contents, ignoring non-numeric properties.\n      while (length--) {\n        if (!eq(a[length], b[length], aStack, bStack)) return false;\n      }\n    } else {\n      // Deep compare objects.\n      var keys = _.keys(a), key;\n      length = keys.length;\n      // Ensure that both objects contain the same number of properties before comparing deep equality.\n      if (_.keys(b).length !== length) return false;\n      while (length--) {\n        // Deep compare each member\n        key = keys[length];\n        if (!(_.has(b, key) && eq(a[key], b[key], aStack, bStack))) return false;\n      }\n    }\n    // Remove the first object from the stack of traversed objects.\n    aStack.pop();\n    bStack.pop();\n    return true;\n  };\n\n  // Perform a deep comparison to check if two objects are equal.\n  _.isEqual = function(a, b) {\n    return eq(a, b);\n  };\n\n  // Is a given array, string, or object empty?\n  // An \"empty\" object has no enumerable own-properties.\n  _.isEmpty = function(obj) {\n    if (obj == null) return true;\n    if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;\n    return _.keys(obj).length === 0;\n  };\n\n  // Is a given value a DOM element?\n  _.isElement = function(obj) {\n    return !!(obj && obj.nodeType === 1);\n  };\n\n  // Is a given value an array?\n  // Delegates to ECMA5's native Array.isArray\n  _.isArray = nativeIsArray || function(obj) {\n    return toString.call(obj) === '[object Array]';\n  };\n\n  // Is a given variable an object?\n  _.isObject = function(obj) {\n    var type = typeof obj;\n    return type === 'function' || type === 'object' && !!obj;\n  };\n\n  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.\n  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {\n    _['is' + name] = function(obj) {\n      return toString.call(obj) === '[object ' + name + ']';\n    };\n  });\n\n  // Define a fallback version of the method in browsers (ahem, IE < 9), where\n  // there isn't any inspectable \"Arguments\" type.\n  if (!_.isArguments(arguments)) {\n    _.isArguments = function(obj) {\n      return _.has(obj, 'callee');\n    };\n  }\n\n  // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,\n  // IE 11 (#1621), and in Safari 8 (#1929).\n  if ( true && typeof Int8Array != 'object') {\n    _.isFunction = function(obj) {\n      return typeof obj == 'function' || false;\n    };\n  }\n\n  // Is a given object a finite number?\n  _.isFinite = function(obj) {\n    return isFinite(obj) && !isNaN(parseFloat(obj));\n  };\n\n  // Is the given value `NaN`? (NaN is the only number which does not equal itself).\n  _.isNaN = function(obj) {\n    return _.isNumber(obj) && obj !== +obj;\n  };\n\n  // Is a given value a boolean?\n  _.isBoolean = function(obj) {\n    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';\n  };\n\n  // Is a given value equal to null?\n  _.isNull = function(obj) {\n    return obj === null;\n  };\n\n  // Is a given variable undefined?\n  _.isUndefined = function(obj) {\n    return obj === void 0;\n  };\n\n  // Shortcut function for checking if an object has a given property directly\n  // on itself (in other words, not on a prototype).\n  _.has = function(obj, key) {\n    return obj != null && hasOwnProperty.call(obj, key);\n  };\n\n  // Utility Functions\n  // -----------------\n\n  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its\n  // previous owner. Returns a reference to the Underscore object.\n  _.noConflict = function() {\n    root._ = previousUnderscore;\n    return this;\n  };\n\n  // Keep the identity function around for default iteratees.\n  _.identity = function(value) {\n    return value;\n  };\n\n  // Predicate-generating functions. Often useful outside of Underscore.\n  _.constant = function(value) {\n    return function() {\n      return value;\n    };\n  };\n\n  _.noop = function(){};\n\n  _.property = property;\n\n  // Generates a function for a given object that returns a given property.\n  _.propertyOf = function(obj) {\n    return obj == null ? function(){} : function(key) {\n      return obj[key];\n    };\n  };\n\n  // Returns a predicate for checking whether an object has a given set of\n  // `key:value` pairs.\n  _.matcher = _.matches = function(attrs) {\n    attrs = _.extendOwn({}, attrs);\n    return function(obj) {\n      return _.isMatch(obj, attrs);\n    };\n  };\n\n  // Run a function **n** times.\n  _.times = function(n, iteratee, context) {\n    var accum = Array(Math.max(0, n));\n    iteratee = optimizeCb(iteratee, context, 1);\n    for (var i = 0; i < n; i++) accum[i] = iteratee(i);\n    return accum;\n  };\n\n  // Return a random integer between min and max (inclusive).\n  _.random = function(min, max) {\n    if (max == null) {\n      max = min;\n      min = 0;\n    }\n    return min + Math.floor(Math.random() * (max - min + 1));\n  };\n\n  // A (possibly faster) way to get the current timestamp as an integer.\n  _.now = Date.now || function() {\n    return new Date().getTime();\n  };\n\n   // List of HTML entities for escaping.\n  var escapeMap = {\n    '&': '&amp;',\n    '<': '&lt;',\n    '>': '&gt;',\n    '\"': '&quot;',\n    \"'\": '&#x27;',\n    '`': '&#x60;'\n  };\n  var unescapeMap = _.invert(escapeMap);\n\n  // Functions for escaping and unescaping strings to/from HTML interpolation.\n  var createEscaper = function(map) {\n    var escaper = function(match) {\n      return map[match];\n    };\n    // Regexes for identifying a key that needs to be escaped\n    var source = '(?:' + _.keys(map).join('|') + ')';\n    var testRegexp = RegExp(source);\n    var replaceRegexp = RegExp(source, 'g');\n    return function(string) {\n      string = string == null ? '' : '' + string;\n      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;\n    };\n  };\n  _.escape = createEscaper(escapeMap);\n  _.unescape = createEscaper(unescapeMap);\n\n  // If the value of the named `property` is a function then invoke it with the\n  // `object` as context; otherwise, return it.\n  _.result = function(object, property, fallback) {\n    var value = object == null ? void 0 : object[property];\n    if (value === void 0) {\n      value = fallback;\n    }\n    return _.isFunction(value) ? value.call(object) : value;\n  };\n\n  // Generate a unique integer id (unique within the entire client session).\n  // Useful for temporary DOM ids.\n  var idCounter = 0;\n  _.uniqueId = function(prefix) {\n    var id = ++idCounter + '';\n    return prefix ? prefix + id : id;\n  };\n\n  // By default, Underscore uses ERB-style template delimiters, change the\n  // following template settings to use alternative delimiters.\n  _.templateSettings = {\n    evaluate    : /<%([\\s\\S]+?)%>/g,\n    interpolate : /<%=([\\s\\S]+?)%>/g,\n    escape      : /<%-([\\s\\S]+?)%>/g\n  };\n\n  // When customizing `templateSettings`, if you don't want to define an\n  // interpolation, evaluation or escaping regex, we need one that is\n  // guaranteed not to match.\n  var noMatch = /(.)^/;\n\n  // Certain characters need to be escaped so that they can be put into a\n  // string literal.\n  var escapes = {\n    \"'\":      \"'\",\n    '\\\\':     '\\\\',\n    '\\r':     'r',\n    '\\n':     'n',\n    '\\u2028': 'u2028',\n    '\\u2029': 'u2029'\n  };\n\n  var escaper = /\\\\|'|\\r|\\n|\\u2028|\\u2029/g;\n\n  var escapeChar = function(match) {\n    return '\\\\' + escapes[match];\n  };\n\n  // JavaScript micro-templating, similar to John Resig's implementation.\n  // Underscore templating handles arbitrary delimiters, preserves whitespace,\n  // and correctly escapes quotes within interpolated code.\n  // NB: `oldSettings` only exists for backwards compatibility.\n  _.template = function(text, settings, oldSettings) {\n    if (!settings && oldSettings) settings = oldSettings;\n    settings = _.defaults({}, settings, _.templateSettings);\n\n    // Combine delimiters into one regular expression via alternation.\n    var matcher = RegExp([\n      (settings.escape || noMatch).source,\n      (settings.interpolate || noMatch).source,\n      (settings.evaluate || noMatch).source\n    ].join('|') + '|$', 'g');\n\n    // Compile the template source, escaping string literals appropriately.\n    var index = 0;\n    var source = \"__p+='\";\n    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {\n      source += text.slice(index, offset).replace(escaper, escapeChar);\n      index = offset + match.length;\n\n      if (escape) {\n        source += \"'+\\n((__t=(\" + escape + \"))==null?'':_.escape(__t))+\\n'\";\n      } else if (interpolate) {\n        source += \"'+\\n((__t=(\" + interpolate + \"))==null?'':__t)+\\n'\";\n      } else if (evaluate) {\n        source += \"';\\n\" + evaluate + \"\\n__p+='\";\n      }\n\n      // Adobe VMs need the match returned to produce the correct offest.\n      return match;\n    });\n    source += \"';\\n\";\n\n    // If a variable is not specified, place data values in local scope.\n    if (!settings.variable) source = 'with(obj||{}){\\n' + source + '}\\n';\n\n    source = \"var __t,__p='',__j=Array.prototype.join,\" +\n      \"print=function(){__p+=__j.call(arguments,'');};\\n\" +\n      source + 'return __p;\\n';\n\n    try {\n      var render = new Function(settings.variable || 'obj', '_', source);\n    } catch (e) {\n      e.source = source;\n      throw e;\n    }\n\n    var template = function(data) {\n      return render.call(this, data, _);\n    };\n\n    // Provide the compiled source as a convenience for precompilation.\n    var argument = settings.variable || 'obj';\n    template.source = 'function(' + argument + '){\\n' + source + '}';\n\n    return template;\n  };\n\n  // Add a \"chain\" function. Start chaining a wrapped Underscore object.\n  _.chain = function(obj) {\n    var instance = _(obj);\n    instance._chain = true;\n    return instance;\n  };\n\n  // OOP\n  // ---------------\n  // If Underscore is called as a function, it returns a wrapped object that\n  // can be used OO-style. This wrapper holds altered versions of all the\n  // underscore functions. Wrapped objects may be chained.\n\n  // Helper function to continue chaining intermediate results.\n  var result = function(instance, obj) {\n    return instance._chain ? _(obj).chain() : obj;\n  };\n\n  // Add your own custom functions to the Underscore object.\n  _.mixin = function(obj) {\n    _.each(_.functions(obj), function(name) {\n      var func = _[name] = obj[name];\n      _.prototype[name] = function() {\n        var args = [this._wrapped];\n        push.apply(args, arguments);\n        return result(this, func.apply(_, args));\n      };\n    });\n  };\n\n  // Add all of the Underscore functions to the wrapper object.\n  _.mixin(_);\n\n  // Add all mutator Array functions to the wrapper.\n  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {\n    var method = ArrayProto[name];\n    _.prototype[name] = function() {\n      var obj = this._wrapped;\n      method.apply(obj, arguments);\n      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];\n      return result(this, obj);\n    };\n  });\n\n  // Add all accessor Array functions to the wrapper.\n  _.each(['concat', 'join', 'slice'], function(name) {\n    var method = ArrayProto[name];\n    _.prototype[name] = function() {\n      return result(this, method.apply(this._wrapped, arguments));\n    };\n  });\n\n  // Extracts the result from a wrapped and chained object.\n  _.prototype.value = function() {\n    return this._wrapped;\n  };\n\n  // Provide unwrapping proxy for some methods used in engine operations\n  // such as arithmetic and JSON stringification.\n  _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;\n\n  _.prototype.toString = function() {\n    return '' + this._wrapped;\n  };\n\n  // AMD registration happens at the end for compatibility with AMD loaders\n  // that may not enforce next-turn semantics on modules. Even though general\n  // practice for AMD registration is to be anonymous, underscore registers\n  // as a named module because, like jQuery, it is a base library that is\n  // popular enough to be bundled in a third party lib, but not be part of\n  // an AMD load request. Those cases could generate an error when an\n  // anonymous define() is called outside of a loader request.\n  if (true) {\n    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {\n      return _;\n    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),\n\t\t\t\t__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));\n  }\n}.call(this));\n\n\n//# sourceURL=webpack:///./node_modules/underscore/underscore.js?");
+
+/***/ }),
+
+/***/ "./node_modules/util-deprecate/browser.js":
+/*!************************************************!*\
+  !*** ./node_modules/util-deprecate/browser.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("/* WEBPACK VAR INJECTION */(function(global) {\n/**\n * Module exports.\n */\n\nmodule.exports = deprecate;\n\n/**\n * Mark that a method should not be used.\n * Returns a modified function which warns once by default.\n *\n * If `localStorage.noDeprecation = true` is set, then it is a no-op.\n *\n * If `localStorage.throwDeprecation = true` is set, then deprecated functions\n * will throw an Error when invoked.\n *\n * If `localStorage.traceDeprecation = true` is set, then deprecated functions\n * will invoke `console.trace()` instead of `console.error()`.\n *\n * @param {Function} fn - the function to deprecate\n * @param {String} msg - the string to print to the console when `fn` is invoked\n * @returns {Function} a new \"deprecated\" version of `fn`\n * @api public\n */\n\nfunction deprecate (fn, msg) {\n  if (config('noDeprecation')) {\n    return fn;\n  }\n\n  var warned = false;\n  function deprecated() {\n    if (!warned) {\n      if (config('throwDeprecation')) {\n        throw new Error(msg);\n      } else if (config('traceDeprecation')) {\n        console.trace(msg);\n      } else {\n        console.warn(msg);\n      }\n      warned = true;\n    }\n    return fn.apply(this, arguments);\n  }\n\n  return deprecated;\n}\n\n/**\n * Checks `localStorage` for boolean values for the given `name`.\n *\n * @param {String} name\n * @returns {Boolean}\n * @api private\n */\n\nfunction config (name) {\n  // accessing global.localStorage can trigger a DOMException in sandboxed iframes\n  try {\n    if (!global.localStorage) return false;\n  } catch (_) {\n    return false;\n  }\n  var val = global.localStorage[name];\n  if (null == val) return false;\n  return String(val).toLowerCase() === 'true';\n}\n\n/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ \"./node_modules/webpack/buildin/global.js\")))\n\n//# sourceURL=webpack:///./node_modules/util-deprecate/browser.js?");
+
+/***/ }),
+
+/***/ "./node_modules/utils-define-read-only-property/lib/index.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/utils-define-read-only-property/lib/index.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n/**\n* FUNCTION: setReadOnly( obj, prop, value )\n*\tDefines a read-only property.\n*\n* @param {Object} obj - object on which to define the property\n* @param {String} prop - property name\n* @param {*} value - value to set\n* @returns {Void}\n*/\nfunction setReadOnly( obj, prop, value ) {\n\tObject.defineProperty( obj, prop, {\n\t\t'value': value,\n\t\t'configurable': false,\n\t\t'writable': false,\n\t\t'enumerable': true\n\t});\n} // end FUNCTION setReadOnly()\n\n\n// EXPORTS //\n\nmodule.exports = setReadOnly;\n\n\n//# sourceURL=webpack:///./node_modules/utils-define-read-only-property/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-array-like/lib/index.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/validate.io-array-like/lib/index.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar isInteger = __webpack_require__( /*! validate.io-integer-primitive */ \"./node_modules/validate.io-integer-primitive/lib/index.js\" );\n\n\n// CONSTANTS //\n\nvar MAX = __webpack_require__( /*! const-max-uint32 */ \"./node_modules/const-max-uint32/lib/index.js\" );\n\n\n// IS ARRAY-LIKE //\n\n/**\n* FUNCTION: isArrayLike( value )\n*\tValidates if a value is array-like.\n*\n* @param {*} value - value to validate\n* @param {Boolean} boolean indicating if a value is array-like\n*/\nfunction isArrayLike( value ) {\n\treturn (\n\t\tvalue !== void 0 &&\n\t\tvalue !== null &&\n\t\ttypeof value !== 'function' &&\n\t\tisInteger( value.length ) &&\n\t\tvalue.length >= 0 &&\n\t\tvalue.length <= MAX\n\t);\n} // end FUNCTION isArrayLike()\n\n\n// EXPORTS //\n\nmodule.exports = isArrayLike;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-array-like/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-array/lib/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/validate.io-array/lib/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n/**\n* FUNCTION: isArray( value )\n*\tValidates if a value is an array.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating whether value is an array\n*/\nfunction isArray( value ) {\n\treturn Object.prototype.toString.call( value ) === '[object Array]';\n} // end FUNCTION isArray()\n\n// EXPORTS //\n\nmodule.exports = Array.isArray || isArray;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-array/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-boolean-primitive/lib/index.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/validate.io-boolean-primitive/lib/index.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/**\n*\n*\tVALIDATE: boolean-primitive\n*\n*\n*\tDESCRIPTION:\n*\t\t- Validates if a value is a boolean primitive.\n*\n*\n*\tNOTES:\n*\t\t[1]\n*\n*\n*\tTODO:\n*\t\t[1]\n*\n*\n*\tLICENSE:\n*\t\tMIT\n*\n*\tCopyright (c) 2015. Athan Reines.\n*\n*\n*\tAUTHOR:\n*\t\tAthan Reines. kgryte@gmail.com. 2015.\n*\n*/\n\n\n\n/**\n* FUNCTION: isBoolean( value )\n*\tValidates if a value is a boolean primitive.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating if a value is a boolean primitive\n*/\nfunction isBoolean( value ) {\n\treturn value === true || value === false;\n} // end FUNCTION isBoolean()\n\n\n// EXPORTS //\n\nmodule.exports = isBoolean;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-boolean-primitive/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-integer-primitive/lib/index.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/validate.io-integer-primitive/lib/index.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar isNumber = __webpack_require__( /*! validate.io-number-primitive */ \"./node_modules/validate.io-number-primitive/lib/index.js\" );\n\n\n// IS INTEGER //\n\n/**\n* FUNCTION: isInteger( value )\n*\tValidates if a value is a number primitive, excluding `NaN`, and an integer.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating if a value is a integer primitive\n*/\nfunction isInteger( value ) {\n\treturn isNumber( value ) && value%1 === 0;\n} // end FUNCTION isInteger()\n\n\n// EXPORTS //\n\nmodule.exports = isInteger;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-integer-primitive/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-number-primitive/lib/index.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/validate.io-number-primitive/lib/index.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/**\n*\n*\tVALIDATE: number-primitive\n*\n*\n*\tDESCRIPTION:\n*\t\t- Validates if a value is a number primitive.\n*\n*\n*\tNOTES:\n*\t\t[1]\n*\n*\n*\tTODO:\n*\t\t[1]\n*\n*\n*\tLICENSE:\n*\t\tMIT\n*\n*\tCopyright (c) 2015. Athan Reines.\n*\n*\n*\tAUTHOR:\n*\t\tAthan Reines. kgryte@gmail.com. 2015.\n*\n*/\n\n\n\n/**\n* FUNCTION: isNumber( value )\n*\tValidates if a value is a number primitive, excluding `NaN`.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating if a value is a number primitive\n*/\nfunction isNumber( value ) {\n\treturn (typeof value === 'number') && (value === value);\n} // end FUNCTION isNumber()\n\n\n// EXPORTS //\n\nmodule.exports = isNumber;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-number-primitive/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-object-array/lib/index.js":
+/*!************************************************************!*\
+  !*** ./node_modules/validate.io-object-array/lib/index.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/**\n*\n*\tVALIDATE: object-array\n*\n*\n*\tDESCRIPTION:\n*\t\t- Validates if a value is an object array.\n*\n*\n*\tNOTES:\n*\t\t[1]\n*\n*\n*\tTODO:\n*\t\t[1]\n*\n*\n*\tLICENSE:\n*\t\tMIT\n*\n*\tCopyright (c) 2015. Athan Reines.\n*\n*\n*\tAUTHOR:\n*\t\tAthan Reines. kgryte@gmail.com. 2015.\n*\n*/\n\n\n\n// MODULES //\n\nvar isArray = __webpack_require__( /*! validate.io-array */ \"./node_modules/validate.io-array/lib/index.js\" ),\n\tisObject = __webpack_require__( /*! validate.io-object */ \"./node_modules/validate.io-object/lib/index.js\" );\n\n\n// IS OBJECT ARRAY //\n\n/**\n* FUNCTION: isObjectArray( value )\n*\tValidates if a value is an object array.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating if a value is an object array\n*/\nfunction isObjectArray( value ) {\n\tvar len;\n\tif ( !isArray( value ) ) {\n\t\treturn false;\n\t}\n\tlen = value.length;\n\tif ( !len ) {\n\t\treturn false;\n\t}\n\tfor ( var i = 0; i < len; i++ ) {\n\t\tif ( !isObject( value[i] ) ) {\n\t\t\treturn false;\n\t\t}\n\t}\n\treturn true;\n} // end FUNCTION isObjectArray()\n\n\n// EXPORTS //\n\nmodule.exports = isObjectArray;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-object-array/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-object/lib/index.js":
+/*!******************************************************!*\
+  !*** ./node_modules/validate.io-object/lib/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n// MODULES //\n\nvar isArray = __webpack_require__( /*! validate.io-array */ \"./node_modules/validate.io-array/lib/index.js\" );\n\n\n// ISOBJECT //\n\n/**\n* FUNCTION: isObject( value )\n*\tValidates if a value is a object; e.g., {}.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating whether value is a object\n*/\nfunction isObject( value ) {\n\treturn ( typeof value === 'object' && value !== null && !isArray( value ) );\n} // end FUNCTION isObject()\n\n\n// EXPORTS //\n\nmodule.exports = isObject;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-object/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-string-array/lib/index.js":
+/*!************************************************************!*\
+  !*** ./node_modules/validate.io-string-array/lib/index.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/**\n*\n*\tVALIDATE: string-array\n*\n*\n*\tDESCRIPTION:\n*\t\t- Validates if a value is a string array.\n*\n*\n*\tNOTES:\n*\t\t[1]\n*\n*\n*\tTODO:\n*\t\t[1]\n*\n*\n*\tLICENSE:\n*\t\tMIT\n*\n*\tCopyright (c) 2015. Athan Reines.\n*\n*\n*\tAUTHOR:\n*\t\tAthan Reines. kgryte@gmail.com. 2015.\n*\n*/\n\n\n\n// MODULES //\n\nvar isArray = __webpack_require__( /*! validate.io-array */ \"./node_modules/validate.io-array/lib/index.js\" ),\n\tisString = __webpack_require__( /*! validate.io-string */ \"./node_modules/validate.io-string/lib/index.js\" );\n\n\n// IS STRING ARRAY //\n\n/**\n* FUNCTION: isStringArray( value )\n*\tValidates if a value is a string array.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating if a value is a string array\n*/\nfunction isStringArray( value ) {\n\tvar len;\n\tif ( !isArray( value ) ) {\n\t\treturn false;\n\t}\n\tlen = value.length;\n\tif ( !len ) {\n\t\treturn false;\n\t}\n\tfor ( var i = 0; i < len; i++ ) {\n\t\tif ( !isString( value[i] ) ) {\n\t\t\treturn false;\n\t\t}\n\t}\n\treturn true;\n} // end FUNCTION isStringArray()\n\n\n// EXPORTS //\n\nmodule.exports = isStringArray;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-string-array/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-string-primitive/lib/index.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/validate.io-string-primitive/lib/index.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\n/**\n* Tests if a value is a string primitive.\n*\n* @param {*} value - value to test\n* @returns {Boolean} boolean indicating if a value is a string primitive\n*/\nfunction isString( value ) {\n\treturn typeof value === 'string';\n} // end FUNCTION isString()\n\n\n// EXPORTS //\n\nmodule.exports = isString;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-string-primitive/lib/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/validate.io-string/lib/index.js":
+/*!******************************************************!*\
+  !*** ./node_modules/validate.io-string/lib/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("/**\n*\n*\tVALIDATE: string\n*\n*\n*\tDESCRIPTION:\n*\t\t- Validates if a value is a string.\n*\n*\n*\tNOTES:\n*\t\t[1]\n*\n*\n*\tTODO:\n*\t\t[1]\n*\n*\n*\tLICENSE:\n*\t\tMIT\n*\n*\tCopyright (c) 2014. Athan Reines.\n*\n*\n*\tAUTHOR:\n*\t\tAthan Reines. kgryte@gmail.com. 2014.\n*\n*/\n\n\n\n/**\n* FUNCTION: isString( value )\n*\tValidates if a value is a string.\n*\n* @param {*} value - value to be validated\n* @returns {Boolean} boolean indicating whether value is a string\n*/\nfunction isString( value ) {\n\treturn typeof value === 'string' || Object.prototype.toString.call( value ) === '[object String]';\n} // end FUNCTION isString()\n\n\n// EXPORTS //\n\nmodule.exports = isString;\n\n\n//# sourceURL=webpack:///./node_modules/validate.io-string/lib/index.js?");
 
 /***/ }),
 
