@@ -51,10 +51,10 @@ class DocInput extends React.Component {
             // reverseing order so the most frequest are first
             .reverse();
 
-        // if the most frequent word is nothing, remove it
-        if (wordFrequency[0].word === ""){
-            wordFrequency = wordFrequency.slice(1, wordFrequency.length);
-        }
+        // Removing all empty strings. It is required to use the loose inequality operator.
+        wordFrequency= wordFrequency.filter((element) => {
+            return element.word != "";
+        });
 
         // passing DocumentTermMatrix to parent
         this.props.analyzeDocCallback({wordFrequency: wordFrequency});
