@@ -99,12 +99,12 @@ class DocInput extends React.Component {
         let top20count = 0;
 
         for (let i = 0; i < topWords; i++){
-            words[i].count += top20count;
+             top20count += words[i].count;
         }
 
        // this is how much of the whole the top 20 percent most used words take up.
        // According to our friend pareto, this number should be approximatley 80%
-       return (top20count / wordCount) * 100;
+       return Math.round((top20count / wordCount) * 100);
 
    }
 

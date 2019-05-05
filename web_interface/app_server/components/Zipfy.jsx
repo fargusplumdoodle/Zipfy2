@@ -26,6 +26,8 @@ class Zipfy extends React.Component {
 	    this.setState({
 			showResults: true,
 			words: doc.words, // finding each word that shows up once or more
+			wordCount: doc.wordCount,
+			paretoRatio: doc.paretoRatio
 		});
     }
 
@@ -35,7 +37,10 @@ class Zipfy extends React.Component {
 			return (
 				<div style={this.style}>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
-					<ParetoChecker style={this.infoStyle} words={this.state.words} />
+					<ParetoChecker style={this.infoStyle}
+								   wordCount={this.state.wordCount}
+								   paretoRatio={this.state.paretoRatio}
+								   words={this.state.words} />
 					<FreqTable words={this.state.words}/>
 				</div>
 			)
