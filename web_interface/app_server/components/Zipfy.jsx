@@ -39,8 +39,7 @@ class Zipfy extends React.Component {
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
 					<ParetoChecker style={this.infoStyle}
 								   wordCount={this.state.wordCount}
-								   paretoRatio={this.state.paretoRatio}
-								   words={this.state.words} />
+								   paretoRatio={this.state.paretoRatio}/>
 					<FreqTable words={this.state.words}/>
 				</div>
 			)
