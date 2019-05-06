@@ -54,6 +54,7 @@ class About extends React.Component {
 					<li><a href={'https://en.wikipedia.org/wiki/Zipf%27s_law'}>Zipfs Law - Wikipedia</a></li>
 					<li><a href={'https://simple.wikipedia.org/wiki/Most_common_words_in_English'}>Most common words in english</a></li>
 					<li><a href={'https://en.wikipedia.org/wiki/Pareto_distribution'}>Pareto Principle - Wikipedia</a></li>
+					<li><a href={'https://www.youtube.com/watch?v=fCn8zs912OE'}>Most importantly, the Vsauce video that inspired this whole thing</a></li>
 				</ul>
 			</div>
 		);
