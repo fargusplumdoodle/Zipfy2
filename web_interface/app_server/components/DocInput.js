@@ -97,7 +97,7 @@ class DocInput extends React.Component {
    getPareto(wordCount, words) {
         let topWords = Math.round(words.length * 0.2);
         let top20count = 0;
-
+        //TODO: I THINK THIS DOESNT WORK
         for (let i = 0; i < topWords; i++){
              top20count += words[i].count;
         }
