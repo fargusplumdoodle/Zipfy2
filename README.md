@@ -44,9 +44,9 @@ The Pareto Principle in this context would suggest that the top 20% most frequen
 
 ### Further reading
 
-*   [An interesting study on Zipfs Law in large datasets]({'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0147073'})
-*   [Zipfs Law - Wikipedia]({'https://en.wikipedia.org/wiki/Zipf%27s_law'})
-*   [Most common words in english]({'https://simple.wikipedia.org/wiki/Most_common_words_in_English'})
-*   [Pareto Principle - Wikipedia]({'https://en.wikipedia.org/wiki/Pareto_distribution'})
-*   [Most importantly, the Vsauce video that inspired this whole thing]({'https://www.youtube.com/watch?v=fCn8zs912OE'})
+*   [An interesting study on Zipfs Law in large datasets](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0147073)
+*   [Zipfs Law - Wikipedia](https://en.wikipedia.org/wiki/Zipf%27s_law)
+*   [Most common words in english](https://simple.wikipedia.org/wiki/Most_common_words_in_English)
+*   [Pareto Principle - Wikipedia](https://en.wikipedia.org/wiki/Pareto_distribution)
+*   [Most importantly, the Vsauce video that inspired this whole thing](https://www.youtube.com/watch?v=fCn8zs912OE)
 
