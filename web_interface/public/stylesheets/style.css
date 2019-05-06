@@ -5,13 +5,6 @@ body {
   color: white;
 }
 
-.zipfy {
-  padding: 50px;
-  background-image: url('images/zipfy-bg.png');
-  color: black;
-  width: 75%;
-  margin: auto;
-}
 
 .docInput {
   width: 80%;
@@ -23,6 +16,14 @@ a {
 }
 a:hover {
   color: #00B7FF;
+}
+
+.zipfy {
+  padding: 50px;
+  background-image: url('images/zipfy-bg.png');
+  color: black;
+  width: 75%;
+  margin: auto;
 }
 
 .btn-lg {
