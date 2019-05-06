@@ -24,7 +24,7 @@ class About extends React.Component {
 					<b>text-miner:</b><br/>
 					A node module for getting statistics out of text. When I did this program last time I made the engine that counted the words myself.<br/><br/>
 
-					<b>Honerable mentions:</b><br/>
+					<b>Honorable mentions:</b><br/>
 					Babel, Pug, Markdown, Docker, Linux, Browser-Sync, Git, Github, and probably more that I cant think of.
 					Wow, for this little app I used collectively millions of hours of humanity... Thanks for doing most of the work humanity!
 				<br/><br/>
@@ -50,9 +50,11 @@ class About extends React.Component {
 				<br/>
 				<h3>Further reading</h3>
 				<ul>
-					<li><a href={'https://simple.wikipedia.org/wiki/Most_common_words_in_Englishlll'}>Most common words in english</a></li>
+					<li><a href={'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0147073'}>An interesting study on Zipfs Law in large datasets</a></li>
+					<li><a href={'https://en.wikipedia.org/wiki/Zipf%27s_law'}>Zipfs Law - Wikipedia</a></li>
+					<li><a href={'https://simple.wikipedia.org/wiki/Most_common_words_in_English'}>Most common words in english</a></li>
+					<li><a href={'https://en.wikipedia.org/wiki/Pareto_distribution'}>Pareto Principle - Wikipedia</a></li>
 				</ul>
-				<p>{'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0147073'}</p>
 			</div>
 		);
 
