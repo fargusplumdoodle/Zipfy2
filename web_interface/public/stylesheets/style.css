@@ -5,7 +5,33 @@ body {
   color: white;
 }
 
+.zipfy {
+  padding: 50px;
+  background-image: url('images/zipfy-bg.png');
+  color: black;
+  width: 75%;
+  margin: auto;
+}
+
+.docInput {
+  width: 80%;
+  margin: auto;
+}
+
 a {
   color: #00B7FF;
 }
 
+.btn-lg {
+  margin: auto;
+}
+
+.hdr {
+  margin: auto;
+    width: auto;
+}
+
+.info {
+  float:left;
+  width: 50%;
+}

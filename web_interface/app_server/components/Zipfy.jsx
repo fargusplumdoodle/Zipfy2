@@ -11,15 +11,6 @@ class Zipfy extends React.Component {
 		    words: [],
             showResults: false
 		};
-		this.style = {
-			width: "50%",
-			margin: "auto"
-		};
-
-		this.infoStyle = {
-		    float: "left",
-			width: "50%",
-		}
 	}
 
 	analyzeDocument(doc) {
@@ -35,18 +26,23 @@ class Zipfy extends React.Component {
 		if (this.state.showResults) {
 			// displaying results
 			return (
-				<div style={this.style}>
-					<DocInput analyzeDocCallback={this.analyzeDocument}/>
-					<ParetoChecker style={this.infoStyle}
-								   wordCount={this.state.wordCount}
-								   paretoRatio={this.state.paretoRatio}/>
+				<div className={'zipfy'}>
+					<h3 className={'hdr'}>Zipfs Law Text Analyzer</h3>
+
+					<DocInput  analyzeDocCallback={this.analyzeDocument}/>
+
+
+						<ParetoChecker wordCount={this.state.wordCount}
+								   		paretoRatio={this.state.paretoRatio}/>
+
 					<FreqTable words={this.state.words}/>
 				</div>
 			)
 		} else {
 			// Ready for user input
 			return (
-				<div style={this.style}>
+				<div className={'zipfy'}>
+					<h3 className={'hdr'}>Zipfs Law Text Analyzer</h3>
 					<DocInput analyzeDocCallback={this.analyzeDocument}/>
 				</div>
 			)

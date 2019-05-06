@@ -95,7 +95,7 @@ class DocInput extends React.Component {
    }
 
    getPareto(wordCount, words) {
-        let topWords = Math.round(words.length * 0.2);
+        let topWords = Math.floor(words.length * 0.2);
         let top20count = 0;
         //TODO: I THINK THIS DOESNT WORK
         for (let i = 0; i < topWords; i++){
@@ -110,30 +110,32 @@ class DocInput extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.analyzeDoc}>
-                <div className="form-group">
-                    <div className="row">
-                        <label htmlFor="doc"
-                               className="col-3 col-form-label">
-                            Enter Text:
-                        </label>
-                    </div>
-                    <div className="row">
-                        <div className="col-3">
-                            <textarea
-                                id="doc_input" className=" form-control"
-                                placeholder=" Your Text document to be analyzed" value={this.state.doc}
-                                onChange={this.handleText}
-                            >test</textarea>
+            <div className={'docInput'}>
+                <form onSubmit={this.analyzeDoc}>
+                    <div className="form-group">
+                        <div className="row">
+                            <label htmlFor="doc"
+                                   className="col-3 col-form-label">
+                                Enter Text:
+                            </label>
                         </div>
-                        <div className="btn-lg">
-                            <button type=" submit" className=" btn btn-primary">
-                                LETS GET ZIPFY UP IN THIS!
-                            </button>
+                        <div className="row">
+                            <div className="col-12">
+                                <textarea
+                                    id="doc_input" className=" form-control"
+                                    placeholder=" Your Text document to be analyzed" value={this.state.doc}
+                                    onChange={this.handleText}
+                                />
+                            </div>
+                            <div className="btn-lg">
+                                <button type=" submit" className=" btn btn-primary">
+                                    LETS GET ZIPFY UP IN THIS!
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         )
     }
 
