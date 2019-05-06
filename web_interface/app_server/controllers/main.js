@@ -1,29 +1,53 @@
 'use strict';
 
+var request = require('request');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 //transpile and add react component
 require("@babel/register") ({
 	presets: [ '@babel/preset-react' ]
 });
+const Footer = React.createFactory(require('../components/Footer.jsx'));
+const Header = React.createFactory(require('../components/Header.jsx'));
+const Zipfy = React.createFactory(require('../components/Zipfy.jsx'));
 const About = React.createFactory(require('../components/About.jsx'));
 
-// index handler
-const index = (req, res)  => {
-	res.send('Hello!');
+function handleHTTPErrors(response) {
+    if (!response.ok) throw Error(response.status + ': ' + response.statusText);
+    return response;
 }
 
-// about handler
-const  about = (req, res) => {
-	const aboutHTML = ReactDOMServer.renderToString(About(
-	     { links: [ 'https://reactjs.org/', 'https://nodejs.org/','https://expressjs.com/' ] }
-   ));
-   res.render('about', { title: 'About', about: aboutHTML } );
- };
+
+// index handler
+const renderIndex = (req, res)  => {
+	res.render('index', {
+		title: 'Zipf Calculator',
+		header: ReactDOMServer.renderToString(Header()),
+		footer: ReactDOMServer.renderToString(Footer()),
+        msgBoard: ReactDOMServer.renderToString(Zipfy()),
+		}
+	);
+};
+
+const renderAbout = (req, res) => {
+	res.render('about', {
+			title: 'Zipfy: About',
+			header: ReactDOMServer.renderToString(Header()),
+			footer: ReactDOMServer.renderToString(Footer()),
+			about: ReactDOMServer.renderToString(About()),
+		}
+	);
+};
+
+const renderStats = (req, res) => {
+
+};
 
 module.exports = {
-	index,
-	about
-
+    renderIndex,
+	renderAbout,
+	renderStats
 };
