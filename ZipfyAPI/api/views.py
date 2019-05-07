@@ -100,6 +100,11 @@ def stats(request):
     }
     """
     if request.method != "GET": return JsonResponse({'error': 'endpoint requires GET'})
+
+    # fixes bug were if this endpoint is called before the POST is called, would result in a 500 error
+    if len(Zipfy.objects.all()) == 0:
+        Zipfy.objects.create(total_documents=0)
+
     data = {
         'documents': Zipfy.objects.all().first().total_documents,
         'unique_words': len(Word.objects.all())

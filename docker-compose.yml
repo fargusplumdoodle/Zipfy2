@@ -1,0 +1,13 @@
+version: "2"
+services:
+  api:
+    container_name: zipfy_api
+    build:
+      context: ZipfyAPI
+      dockerfile: Dockerfile
+    image: zipfy_api
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+
