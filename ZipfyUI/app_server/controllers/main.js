@@ -14,6 +14,7 @@ const Footer = React.createFactory(require('../components/Footer.jsx'));
 const Header = React.createFactory(require('../components/Header.jsx'));
 const Zipfy = React.createFactory(require('../components/Zipfy.jsx'));
 const About = React.createFactory(require('../components/About.jsx'));
+const Stats = React.createFactory(require('../components/GlobalStats.jsx'));
 
 function handleHTTPErrors(response) {
     if (!response.ok) throw Error(response.status + ': ' + response.statusText);
@@ -43,6 +44,13 @@ const renderAbout = (req, res) => {
 };
 
 const renderStats = (req, res) => {
+	res.render('stats', {
+			title: 'Zipfy: Global Statistics',
+			header: ReactDOMServer.renderToString(Header()),
+			footer: ReactDOMServer.renderToString(Footer()),
+			stats: ReactDOMServer.renderToString(Stats()),
+		}
+	);
 
 };
 
