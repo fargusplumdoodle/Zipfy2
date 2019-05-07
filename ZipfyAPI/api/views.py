@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 import json
 import re
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Word, Zipfy
 
 
@@ -55,7 +55,7 @@ class ZipfAPI(APIView):
 
             # 3. adding data to base of data
             # this whole thing assumes everything works when connecting to the database
-            db_word = Word.objects.get_or_create(word=word['word'])[0]  # get_or_create returns a tuple, we want the first element of
+            db_word = Word.objects.get_or_create(word=word['word'])[0]
             x = type(db_word)
             db_word.word_count = db_word.word_count + word['count']
 
@@ -71,6 +71,22 @@ class ZipfAPI(APIView):
             z.save()
 
         return HttpResponse(status=201)
+
+    def get(self, request, format=None):
+        """
+        returns a list of all words in the database and how many times they appear.
+        It is the clients job to sort and make sense of them, they mave more computing resources than we do
+        """
+        data = {
+            'words': []
+        }
+
+        for word in Word.objects.all():
+            data['words'].append({
+                'word': word.word, 'count': word.word_count
+            })
+
+        return JsonResponse(data=data, status=200)
 
 
 def validate_input(data):
