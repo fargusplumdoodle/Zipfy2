@@ -21,7 +21,7 @@ A node module for getting statistics out of text. When I did this program last t
 For containerizing the Django app with the NodeJS app.
 
 **Honorable mentions:**  
-Babel, Pug, Markdown, Linux, Browser-Sync, Git, Github, and probably more that I cant think of. Wow, for this little app I used collectively millions of hours of humanity... Thanks for doing most of the work humanity!  
+Babel, Pug, Markdown, Linux, PyCharm, Webstorm, Bash, Browser-Sync, Git, Github, and probably more that I cant think of. Wow, for this little app I used collectively millions of hours of humanity... Thanks for doing most of the work humanity!  
 
 #### Zipfs Law
 
