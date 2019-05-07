@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from api.views import ZipfAPI
+from api.views import ZipfAPI, stats
 
 urlpatterns = [
     path('api/v1/', ZipfAPI.as_view()),
+    path('api/v1/stats', stats),
 ]

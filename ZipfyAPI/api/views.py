@@ -89,6 +89,23 @@ class ZipfAPI(APIView):
         return JsonResponse(data=data, status=200)
 
 
+def stats(request):
+    """
+    this view is for retrieving global stats/information
+
+    :response:
+    {
+        'documents': <int, total number of documents submitted to API>,
+        'unique_words': <int, total number of unique words in database>
+    }
+    """
+    if request.method != "GET": return JsonResponse({'error': 'endpoint requires GET'})
+    data = {
+        'documents': Zipfy.objects.all().first().total_documents,
+        'unique_words': len(Word.objects.all())
+    }
+    return JsonResponse(data)
+
 def validate_input(data):
     try:
         if not type(data['words']) == list: return False
