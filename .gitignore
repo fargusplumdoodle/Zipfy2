@@ -7,10 +7,10 @@ yarn-error.log*
 
 **/node_modules
 **/__pycache__
-web_interface/v8-compile-cache-0
+ZipfyUI/v8-compile-cache-0
 **/v8-compile-cache-*
-
-web_interface/public/javascripts/bundle.js
+**/migrations/*
+ZipfyUI/public/javascripts/bundle.js
 # Runtime data
 pids
 *.pid

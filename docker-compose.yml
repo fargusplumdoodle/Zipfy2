@@ -10,4 +10,17 @@ services:
     tty: true
     ports:
       - "8000:8000"
+  web:
+    container_name: zipfy_ui
+    build:
+      context: ZipfyUI
+      dockerfile: Dockerfile
+    image: zipfy_ui
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+       
 
